@@ -4,8 +4,15 @@ import auth0Client from "./auth";
 
 class Callback extends Component<RouteComponentProps> {
   async componentDidMount() {
-    await auth0Client.handleAuthentication().then(() => {});
-    this.props.history.replace("/");
+    await auth0Client.handleAuthentication().then(() => {
+      console.log("user was authenticated");
+      this.props.history.replace("/choose")
+    }).catch(err =>{
+      console.log("Sorry, authentication failed.")
+      this.props.history.replace("/");
+    });
+    
+    
   }
 
   render() {

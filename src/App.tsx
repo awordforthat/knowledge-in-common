@@ -2,18 +2,22 @@ import React from "react";
 import { Route } from "react-router-dom";
 import { Home } from "./pages/home";
 import { Account } from "./pages/account";
-import { NavigationBar } from "./navBar";
+import { NavigationBar } from "./ui/navBar";
 import "./index.css";
 import "./reset.css";
 import { CallbackFunc } from "./callback";
+import { About } from "./pages/about";
+import { TopicMenu } from "./pages/topicMenu";
 
 function App() {
   return (
     <div className="main">
       <NavigationBar />
       <Route exact path="/" component={Home} />
+      <Route exact path="/choose" component={TopicMenu} />
       <Route exact path="/user/:userId" component={Account} />
       <Route exact path="/callback" component={CallbackFunc} />
+      <Route exact path="/about" component={About} />
       <div>Footer</div>
     </div>
   );

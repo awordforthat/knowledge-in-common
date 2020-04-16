@@ -29,7 +29,7 @@ class Auth {
   }
 
   getProfile() {
-    return this.getProfile;
+    return this.profile;
   }
 
   getIdToken() {

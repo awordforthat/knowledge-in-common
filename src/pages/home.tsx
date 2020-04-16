@@ -2,7 +2,7 @@ import * as React from "react";
 import axios from "axios";
 import { ITopic } from "../api/iTopic";
 import auth0Client from "../auth";
-import { RequestPage } from "./request";
+import { TopicMenu } from "./topicMenu";
 
 interface IHomeState {
   topics: ITopic[];
@@ -17,28 +17,45 @@ export class Home extends React.Component<{}, IHomeState> {
   }
 
   async componentDidMount() {
-    const topics = (await axios.get("http://localhost:8081/")).data;
+    const topics = (await axios.get("http://localhost:8081/topic")).data;
     this.setState({
       topics
     });
   }
   public render() {
-    if (auth0Client.isAuthenticated()) {
-      return (
-        <RequestPage
-          isAuthenticated={auth0Client.isAuthenticated()}
-          userId={"temp-string"}
-        />
-      );
-    }
+  
 
     return (
       <div>
         Home page
-        <section>Hero</section>
+        <section>
+          Hero
+          <button onClick={this.handleSignIn}>Sign in</button>
+          <button onClick={this.handleSignUp}>Sign up</button>
+        </section>
         <section>About</section>
-        <section>Explore</section>
+        <section>
+          <div>Explore</div>
+          {this.renderTopics()}
+        </section>
       </div>
     );
   }
+
+  private handleSignIn = () => {
+    //
+  };
+  private handleSignUp = () => {
+    //
+  };
+
+  private renderTopics = () => {
+    return this.state.topics.map(topic => {
+      return (
+        <div>
+          Name: {topic.name} Category: {topic.category}
+        </div>
+      );
+    });
+  };
 }
