@@ -4,11 +4,14 @@ import auth0Client from "../auth";
 import { IUserData } from "../api/iUserData";
 import { RouteComponentProps, withRouter } from "react-router";
 import { CSSTransition } from "react-transition-group";
+import { dataExists } from "../helpers";
+import { createHashHistory } from "history";
 
 interface ITopicMenuState {
   enableSubmit: boolean;
   userData: IUserData | undefined;
   showUsernamePopup: boolean;
+  typedName: string;
 }
 
 export class TopicMenu extends React.Component<{}, ITopicMenuState> {
@@ -17,26 +20,29 @@ export class TopicMenu extends React.Component<{}, ITopicMenuState> {
     this.state = {
       enableSubmit: true,
       userData: undefined,
-      showUsernamePopup: false
+      showUsernamePopup: false,
+      typedName: ""
     };
   }
 
-  async componentDidMount() {
-    const userData = await axios
-      .get("http://localhost:8081/user/" + auth0Client.getIdToken())
+  componentDidMount() {
+    axios
+      .get("http://localhost:8081/user/" + auth0Client.getIdToken()) //auth0Client.getIdToken()
       .catch(reason => {
         // if we don't recognize this user, try to set a username for them and then create them
-
         this.setState({ showUsernamePopup: true });
       })
       .then(value => {
-        console.log(value);
+        if (value) {
+          this.setState({
+            userData: this.parseUserData(value.data)
+          });
+        }
       });
   }
 
   public render() {
-    console.log(this.state.showUsernamePopup);
-    if (auth0Client.isAuthenticated) {
+    if (auth0Client.isAuthenticated()) {
       return (
         <div>
           <CSSTransition
@@ -49,11 +55,27 @@ export class TopicMenu extends React.Component<{}, ITopicMenuState> {
               <div>Hey there stranger! What's your name?</div>
               <div>This is the name that will be shown to your matches.</div>
 
-              <input type="text" id="name" name="name" />
+              <input
+                type="text"
+                id="name"
+                name="name"
+                onChange={this.handleNicknameUpdate}
+              />
               <button onClick={this.handleSubmitUsername}>Submit</button>
               <button onClick={this.handleDeclineUsername}>
                 Skip Username
               </button>
+            </div>
+          </CSSTransition>
+          <CSSTransition
+            in={dataExists(this.state.userData)}
+            classNames="fade"
+            timeout={100}
+          >
+            <div>
+              {this.state.userData && this.state.userData.userName
+                ? "Hey there, " + this.state.userData.userName + "!"
+                : "Hey there!"}
             </div>
           </CSSTransition>
         </div>
@@ -64,32 +86,37 @@ export class TopicMenu extends React.Component<{}, ITopicMenuState> {
   }
 
   private handleSubmitUsername = () => {
-    const userData = axios
-      .post("http://localhost:8081/addUser", {
-        id: auth0Client.getIdToken,
-        userName: "awordforthat",
-        email: "someone@something.com"
+    if (!auth0Client.isAuthenticated) {
+      return;
+    }
+
+    axios
+      .post("http://localhost:8081/user", {
+        authToken: auth0Client.getIdToken(),
+        userName: this.state.typedName,
+        email: auth0Client.getProfile()!.name
       })
       .catch(err => {
         console.log("Failed to create user");
       })
-      .then(value => {
-        console.log("User successfully created");
-        this.setState(
-          {
-            showUsernamePopup: false
-          },
-          () => {
-            console.log("Promise was rejected");
+      .then(res => {
+        this.setState({
+          showUsernamePopup: false,
+          userData: {
+            authToken: (res as any).data!.user.authToken,
+            email: (res as any).data.user.email,
+            userName: (res as any).data.user.userName
+              ? (res as any).data.user.userName
+              : undefined
           }
-        );
+        });
       });
   };
 
   private handleDeclineUsername = () => {
     axios
-      .post("http://localhost:8081/addUser", {
-        id: auth0Client.getIdToken,
+      .post("http://localhost:8081/user", {
+        authToken: auth0Client.getIdToken(),
         email: "someone@something.com"
       })
       .catch(err => {
@@ -101,4 +128,18 @@ export class TopicMenu extends React.Component<{}, ITopicMenuState> {
         });
       });
   };
+
+  private handleNicknameUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      typedName: e.currentTarget.value
+    });
+  };
+
+  private parseUserData(data: any): IUserData {
+    return {
+      authToken: data.authToken,
+      email: data.email,
+      userName: data.userName ? data.userName : undefined
+    };
+  }
 }

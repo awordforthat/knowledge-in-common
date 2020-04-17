@@ -1,6 +1,9 @@
 import { ITopic } from "./iTopic";
 
 export interface IUserData {
-  learn: ITopic[];
-  teach: ITopic[];
+  authToken: string;
+  userName?: string;
+  email: string;
+  learn?: ITopic[];
+  teach?: ITopic[];
 }

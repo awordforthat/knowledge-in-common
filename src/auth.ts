@@ -56,8 +56,7 @@ class Auth {
           return reject(err);
         }
         this.idToken = authResult.idToken;
-        this.profile = authResult.idTokenPayload as IUserProfile;
-        console.log(authResult);
+        this.profile = authResult.idTokenPayload;
         // set the time that the id token will expire at
         this.expiresAt = authResult.idTokenPayload.exp * 1000;
         resolve();
