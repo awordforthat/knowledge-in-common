@@ -2,10 +2,10 @@ import * as React from "react";
 import axios from "axios";
 import auth0Client from "../auth";
 import { IUserData } from "../api/iUserData";
-import { RouteComponentProps, withRouter } from "react-router";
 import { CSSTransition } from "react-transition-group";
 import { dataExists } from "../helpers";
-import { createHashHistory } from "history";
+import { Footer } from "../ui/footer";
+import "../css/transitions.css";
 
 interface ITopicMenuState {
   enableSubmit: boolean;
@@ -78,10 +78,16 @@ export class TopicMenu extends React.Component<{}, ITopicMenuState> {
                 : "Hey there!"}
             </div>
           </CSSTransition>
+          <Footer />
         </div>
       );
     } else {
-      return <div>You've been signed out. Please sign in again.</div>;
+      return (
+        <div>
+          <div>You've been signed out. Please sign in again.</div>
+          <Footer />
+        </div>
+      );
     }
   }
 

@@ -1,16 +1,37 @@
 .nav-bar {
   width: 100vw;
-  height: 20vh;
+  height: 10vh;
   min-height: 50px;
   max-height: 200px;
   background: #222222;
   color: white;
+  top: 0px;
 
-  a:visited {
-    color: yellowgreen;
+  a {
+    color: white;
+    text-decoration: none;
   }
 
-  .tab {
-    background-color: orange;
+  a:visited {
+    color: white;
+  }
+
+  .button {
+    color: white;
+    border: 1px solid white;
+  }
+
+  .button-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    width: 100%;
+
+    .tab {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid white;
+    }
   }
 }

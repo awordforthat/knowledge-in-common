@@ -10,21 +10,29 @@ class NavBar extends React.Component<RouteComponentProps, {}> {
         <Link className="brand" to="/">
           Home
         </Link>
-        <Link className="tab" to="/about">
-          About
-        </Link>
-        {auth0Client.isAuthenticated() ? (
-          <div>
-            <Link className="tab" to="/account">
-              Account
-            </Link>
-            <button onClick={this.signOut}>Sign out</button>
+        <div className="button-bar">
+          <div className="tab">
+            <Link to="/about">About</Link>
           </div>
-        ) : (
-          <div>
-            <button onClick={auth0Client.signIn}>Sign in</button>
-          </div>
-        )}
+
+          {auth0Client.isAuthenticated() ? (
+            <div>
+              <div className="tab">
+                <Link to="/account">Account</Link>
+              </div>
+
+              <div className="button" onClick={this.signOut}>
+                Sign out
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div className="button" onClick={auth0Client.signIn}>
+                Sign in
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     );
   }
