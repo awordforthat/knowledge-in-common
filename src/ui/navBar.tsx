@@ -27,9 +27,9 @@ class NavBar extends React.Component<RouteComponentProps, {}> {
             </div>
           ) : (
             <div>
-              <div className="button" onClick={auth0Client.signIn}>
+              {/* <div className="button" onClick={auth0Client.signIn}>
                 Sign in
-              </div>
+              </div> */}
             </div>
           )}
         </div>
