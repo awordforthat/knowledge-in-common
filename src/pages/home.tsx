@@ -3,6 +3,9 @@ import axios from "axios";
 import { ITopic } from "../api/iTopic";
 import { CSSTransition } from "react-transition-group";
 import { LoginPanel, LoginType } from "./login";
+import { RouteComponentProps } from "react-router-dom";
+
+import "../css/global.css";
 
 interface IHomeState {
   topics: ITopic[];
@@ -10,8 +13,8 @@ interface IHomeState {
   loginType: LoginType;
 }
 
-export class Home extends React.Component<{}, IHomeState> {
-  constructor(props: {}) {
+export class Home extends React.Component<RouteComponentProps, IHomeState> {
+  constructor(props: RouteComponentProps) {
     super(props);
     this.state = {
       topics: [],
@@ -21,10 +24,10 @@ export class Home extends React.Component<{}, IHomeState> {
   }
 
   async componentDidMount() {
-    const topics = (await axios.get("http://localhost:8081/topic")).data;
-    this.setState({
-      topics
-    });
+    // const topics = (await axios.get("http://localhost:8081/topic")).data;
+    // this.setState({
+    //   topics
+    // });
   }
   public render() {
     return (
@@ -42,14 +45,14 @@ export class Home extends React.Component<{}, IHomeState> {
         </section>
         <CSSTransition
           in={this.state.login}
-          className={"fade"}
-          timeout={1000}
+          classNames={"fade"}
+          timeout={500}
           unmountOnExit={true}
         >
           <LoginPanel
             initialLoginType={this.state.loginType}
             onCancel={this.handleLoginCancel}
-            onSuccess={this.handleLoginCancel}
+            onSuccess={this.handleLoginSuccess}
           />
         </CSSTransition>
       </div>
@@ -60,6 +63,17 @@ export class Home extends React.Component<{}, IHomeState> {
     this.setState({
       login: false
     });
+  };
+
+  private handleLoginSuccess = () => {
+    this.setState(
+      {
+        login: false
+      },
+      () => {
+        this.props.history.replace("/choose");
+      }
+    );
   };
 
   private handleSignIn = () => {

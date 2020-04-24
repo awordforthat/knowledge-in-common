@@ -1,5 +1,4 @@
 import * as React from "react";
-import auth0Client from "../auth";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import "../css/navBar.css";
 
@@ -15,7 +14,7 @@ class NavBar extends React.Component<RouteComponentProps, {}> {
             <Link to="/about">About</Link>
           </div>
 
-          {auth0Client.isAuthenticated() ? (
+          {window.localStorage["authToken"] !== "null" ? (
             <div>
               <div className="tab">
                 <Link to="/account">Account</Link>
@@ -27,9 +26,9 @@ class NavBar extends React.Component<RouteComponentProps, {}> {
             </div>
           ) : (
             <div>
-              {/* <div className="button" onClick={auth0Client.signIn}>
+              <div className="button" onClick={this.handleSignInRequest}>
                 Sign in
-              </div> */}
+              </div>
             </div>
           )}
         </div>
@@ -37,8 +36,12 @@ class NavBar extends React.Component<RouteComponentProps, {}> {
     );
   }
 
+  private handleSignInRequest = () => {
+    console.log("Sign in");
+  };
+
   private signOut = () => {
-    auth0Client.signOut();
+    window.localStorage["authToken"] = null;
     this.props.history.replace("/");
   };
 }

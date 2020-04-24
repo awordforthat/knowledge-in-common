@@ -30,7 +30,43 @@
       .input-field {
         width: 100%;
         margin-top: 10px;
-        border: 1px solid black;
+      }
+    }
+
+    .cta {
+      background: #2f84da;
+      color: #eeeeee;
+    }
+    .cta:active {
+      background-color: rgba(#2f84da, 0.9);
+    }
+    .cancel {
+      background: transparent;
+      border: 1px solid #555555;
+      color: #555555;
+      transition: color 0.1s, border 0.1s;
+    }
+    .cancel:active {
+      border: 1px solid black;
+      color: black;
+    }
+
+    .buttons {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      .button {
+        width: 100px;
+        height: 30px;
+        padding: 10px;
+        transition: background-color 0.1s;
+        user-select: none;
+        margin: 10px;
+
+        &.disabled {
+          background: #ababab;
+          pointer-events: none;
+        }
       }
     }
   }
