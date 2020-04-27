@@ -1,8 +1,14 @@
 import * as React from "react";
-import { RouteComponentProps, withRouter } from "react-router-dom";
-import "../css/login.css";
-import { CSSTransition } from "react-transition-group";
 import axios from "axios";
+
+import { RouteComponentProps, withRouter } from "react-router-dom";
+import { CSSTransition } from "react-transition-group";
+import { CurrentUser } from "../css/user";
+
+import "../css/login.css";
+import "../css/transitions.css";
+import { dataExists } from "../helpers";
+import { serverUrl } from "..";
 
 export type LoginType = "SIGN_IN" | "SIGN_UP";
 
@@ -19,6 +25,7 @@ interface ILoginState {
   password: string;
   repeatPassword: string;
   submitting: boolean;
+  error: string | undefined;
 }
 
 class Login extends React.Component<ILoginProps, ILoginState> {
@@ -31,7 +38,8 @@ class Login extends React.Component<ILoginProps, ILoginState> {
       email: "",
       password: "",
       repeatPassword: "",
-      submitting: false
+      submitting: false,
+      error: undefined
     };
   }
 
@@ -45,7 +53,12 @@ class Login extends React.Component<ILoginProps, ILoginState> {
 
   public render() {
     return (
-      <div id="login-wrapper" className="login" onClick={this.handleClick}>
+      <div
+        id="login-wrapper"
+        className="login"
+        onClick={this.handleClick}
+        onKeyDown={this.handleEnter}
+      >
         <div
           id="login-panel"
           className="panel shadow rounded"
@@ -53,25 +66,40 @@ class Login extends React.Component<ILoginProps, ILoginState> {
         >
           <div>
             <div className="header">Hi there!</div>
-            <div className="input-fields">
-              <CSSTransition
-                in={this.state.loginType === "SIGN_UP"}
-                className={"input-field vertical-squish"}
-                timeout={500}
-                unmountOnExit={true}
+            <div className="login-type-container">
+              <div
+                onClick={this.setLoginTypeSignIn}
+                className={
+                  this.state.loginType === "SIGN_IN"
+                    ? "login-type active  center-contents"
+                    : "login-type  center-contents"
+                }
               >
-                <div>
-                  <label htmlFor="username-input">
-                    What should we call you?
-                  </label>
-                  <input
-                    type="text"
-                    name="username-input"
-                    placeholder={"This name will be shown to your matches"}
-                    onChange={this.handleUsernameChange}
-                  />
+                LOG IN
+              </div>
+              <div
+                onClick={this.setLoginTypeSignUp}
+                className={
+                  this.state.loginType === "SIGN_UP"
+                    ? "login-type active  center-contents"
+                    : "login-type  center-contents"
+                }
+              >
+                SIGN UP
+              </div>
+            </div>
+            <div>
+              <CSSTransition
+                in={dataExists(this.state.error)}
+                classNames={"vertical-squish"}
+                timeout={500}
+              >
+                <div className="error-field center-contents">
+                  {this.state.error ? this.state.error : ""}
                 </div>
               </CSSTransition>
+            </div>
+            <div className="input-fields">
               <div className="input-field">
                 <label htmlFor="email-input">Email:</label>
                 <input
@@ -91,18 +119,37 @@ class Login extends React.Component<ILoginProps, ILoginState> {
               </div>
               <CSSTransition
                 in={this.state.loginType === "SIGN_UP"}
-                className={"input-field vertical-squish"}
+                classNames={"vertical-squish"}
                 timeout={500}
                 unmountOnExit={true}
               >
-                <div>
+                <div className="input-field">
                   <label htmlFor="password-verify-input">
-                    Repeat password:
+                    Verify password:
                   </label>
                   <input
                     type="password"
                     name="password-verify-input"
                     onChange={this.handleRepeatPasswordUpdate}
+                  />
+                </div>
+              </CSSTransition>
+
+              <CSSTransition
+                in={this.state.loginType === "SIGN_UP"}
+                classNames={"vertical-squish"}
+                timeout={500}
+                unmountOnExit={true}
+              >
+                <div className="input-field">
+                  <label htmlFor="username-input">
+                    What should we call you?
+                  </label>
+                  <input
+                    type="text"
+                    name="username-input"
+                    placeholder={"This name will be shown to your matches"}
+                    onChange={this.handleUsernameChange}
                   />
                 </div>
               </CSSTransition>
@@ -134,7 +181,9 @@ class Login extends React.Component<ILoginProps, ILoginState> {
   private evaluateCanSubmit = () => [
     this.setState(prevState => {
       let submit = false;
-      if (prevState.loginType === "SIGN_IN") {
+      if (prevState.submitting) {
+        submit = false;
+      } else if (prevState.loginType === "SIGN_IN") {
         submit = prevState.email !== "" && prevState.password !== "";
       } else {
         submit =
@@ -172,6 +221,13 @@ class Login extends React.Component<ILoginProps, ILoginState> {
       this.evaluateCanSubmit
     );
   };
+
+  private handleEnter = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && this.state.canSubmit) {
+      this.handleSubmit();
+    }
+  };
+
   private handlePanelClick = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
@@ -181,7 +237,23 @@ class Login extends React.Component<ILoginProps, ILoginState> {
       {
         password: e.currentTarget.value
       },
-      this.evaluateCanSubmit
+      () => {
+        if (this.state.loginType === "SIGN_UP") {
+          if (
+            this.state.repeatPassword !== "" &&
+            this.state.password !== this.state.repeatPassword
+          ) {
+            this.setState({
+              error: "Passwords do not match"
+            });
+          } else {
+            this.setState({
+              error: undefined
+            });
+          }
+        }
+        this.evaluateCanSubmit();
+      }
     );
   };
 
@@ -192,7 +264,23 @@ class Login extends React.Component<ILoginProps, ILoginState> {
       {
         repeatPassword: e.currentTarget.value
       },
-      this.evaluateCanSubmit
+      () => {
+        if (this.state.loginType === "SIGN_UP") {
+          if (
+            this.state.repeatPassword !== "" &&
+            this.state.password !== this.state.repeatPassword
+          ) {
+            this.setState({
+              error: "Passwords do not match"
+            });
+          } else {
+            this.setState({
+              error: undefined
+            });
+          }
+        }
+        this.evaluateCanSubmit();
+      }
     );
   };
 
@@ -203,41 +291,71 @@ class Login extends React.Component<ILoginProps, ILoginState> {
     this.setState({
       submitting: true
     });
+    axios.defaults.headers.post["Content-Type"] =
+      "application/x-www-form-urlencoded";
 
     if (this.state.loginType === "SIGN_IN") {
       axios
-        .post("http://localhost:8081/login", {
-          email: this.state.email,
+        .post(serverUrl + "/login", {
+          email: this.state.email.replace(/\s/g, ""),
           password: this.state.password
         })
         .then(res => {
-          console.log(res);
-          window.localStorage["authToken"] = res.data.token;
-          window.localStorage["username"] = res.data.user.username;
-          console.log(window.localStorage["username"]);
+          CurrentUser.signIn(
+            res.data.token,
+            res.data.id,
+            res.data.username,
+            res.data.email
+          );
+
           this.props.onSuccess();
+          this.setState({
+            error: undefined
+          });
         })
         .catch(err => {
-          console.log(err);
+          console.log(err.message);
+          this.setState({
+            error:
+              err && err.response
+                ? err.response.status === 401
+                  ? "Unrecognized email or password"
+                  : err.message
+                : "" + err
+          });
         })
         .finally(() => {
           this.setState({ submitting: false });
         });
     } else {
       axios
-        .put("http://localhost:8081/user", {
-          email: this.state.email,
+        .put(serverUrl + "/user", {
+          email: this.state.email.replace(/\s/g, ""),
           password: this.state.password,
           username: this.state.userName
         })
         .then(res => {
-          window.localStorage["authToken"] = res.data.token;
-          window.localStorage["id"] = res.data.user._id;
-          window.localStorage["username"] = res.data.user.username;
+          CurrentUser.signIn(
+            res.data.token,
+            res.data.id,
+            res.data.username,
+            res.data.email
+          );
+          this.setState({
+            error: undefined
+          });
           this.props.onSuccess();
         })
         .catch(err => {
-          console.log(err);
+          console.log(err.message);
+          this.setState({
+            error:
+              err & err.response
+                ? err.response.status === 401
+                  ? "User already exists"
+                  : err.message
+                : "" + err
+          });
         })
         .finally(() => {
           this.setState({ submitting: false });
@@ -250,9 +368,7 @@ class Login extends React.Component<ILoginProps, ILoginState> {
       {
         userName: e.currentTarget.value
       },
-      () => {
-        this.evaluateCanSubmit();
-      }
+      this.evaluateCanSubmit
     );
   };
 
@@ -263,7 +379,22 @@ class Login extends React.Component<ILoginProps, ILoginState> {
       userName: "",
       email: "",
       password: "",
-      repeatPassword: ""
+      repeatPassword: "",
+      error: undefined
+    });
+  };
+
+  private setLoginTypeSignIn = () => {
+    this.setState({
+      loginType: "SIGN_IN",
+      error: undefined
+    });
+  };
+
+  private setLoginTypeSignUp = () => {
+    this.setState({
+      loginType: "SIGN_UP",
+      error: undefined
     });
   };
 }

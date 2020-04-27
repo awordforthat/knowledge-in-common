@@ -6,6 +6,7 @@ import { LoginPanel, LoginType } from "./login";
 import { RouteComponentProps } from "react-router-dom";
 
 import "../css/global.css";
+import "../css/transitions.css";
 
 interface IHomeState {
   topics: ITopic[];

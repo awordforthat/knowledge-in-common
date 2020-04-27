@@ -5,6 +5,7 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
+export const serverUrl: string = "http://192.168.1.122:3000";
 ReactDOM.render(
   <BrowserRouter>
     <App />

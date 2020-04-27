@@ -25,20 +25,12 @@ class NavBar extends React.Component<RouteComponentProps, {}> {
               </div>
             </div>
           ) : (
-            <div>
-              <div className="button" onClick={this.handleSignInRequest}>
-                Sign in
-              </div>
-            </div>
+            <div />
           )}
         </div>
       </div>
     );
   }
-
-  private handleSignInRequest = () => {
-    console.log("Sign in");
-  };
 
   private signOut = () => {
     window.localStorage["authToken"] = null;
