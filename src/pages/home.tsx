@@ -5,6 +5,7 @@ import { CSSTransition } from "react-transition-group";
 import { LoginPanel, LoginType } from "./login";
 import { RouteComponentProps } from "react-router-dom";
 
+import "../css/home.css";
 import "../css/global.css";
 import "../css/transitions.css";
 
@@ -20,28 +21,41 @@ export class Home extends React.Component<RouteComponentProps, IHomeState> {
     this.state = {
       topics: [],
       login: false,
-      loginType: "SIGN_IN"
+      loginType: "LOG_IN"
     };
   }
 
-  async componentDidMount() {
-    // const topics = (await axios.get("http://localhost:8081/topic")).data;
-    // this.setState({
-    //   topics
-    // });
+  componentDidMount() {
+    axios
+      .get("http://localhost:8081/topic")
+      .then(result => {
+        console.log(result);
+        this.setState({
+          topics: result.data["data"]
+        });
+      })
+      .catch(err => {
+        console.log("Failed to get topics");
+      });
   }
   public render() {
     return (
-      <div>
-        Home page
-        <section>
-          Hero
-          <button onClick={this.handleSignUp}>Sign up</button>
-          <button onClick={this.handleSignIn}>Sign in</button>
+      <div className="home">
+        <div className="background" />
+        <section id="hero">
+          <div id="hero-text" className="fit-parent center-contents">
+            Learn. Teach. Connect.
+          </div>
+          <div className="button-container">
+            <button onClick={this.handleSignUp}>Sign up</button>
+            <button onClick={this.handleSignIn}>Log in</button>
+          </div>
         </section>
-        <section>About</section>
+        <section id="About">
+          <div className="title">About</div>
+        </section>
         <section>
-          <div>Explore</div>
+          <div className="title">Explore</div>
           {this.renderTopics()}
         </section>
         <CSSTransition
@@ -80,7 +94,7 @@ export class Home extends React.Component<RouteComponentProps, IHomeState> {
   private handleSignIn = () => {
     this.setState({
       login: true,
-      loginType: "SIGN_IN"
+      loginType: "LOG_IN"
     });
   };
 

@@ -10,7 +10,7 @@ import "../css/transitions.css";
 import { dataExists } from "../helpers";
 import { serverUrl } from "..";
 
-export type LoginType = "SIGN_IN" | "SIGN_UP";
+export type LoginType = "LOG_IN" | "SIGN_UP";
 
 interface ILoginProps extends RouteComponentProps {
   onCancel: () => void;
@@ -68,9 +68,9 @@ class Login extends React.Component<ILoginProps, ILoginState> {
             <div className="header">Hi there!</div>
             <div className="login-type-container">
               <div
-                onClick={this.setLoginTypeSignIn}
+                onClick={this.setLoginTypeLogIn}
                 className={
-                  this.state.loginType === "SIGN_IN"
+                  this.state.loginType === "LOG_IN"
                     ? "login-type active  center-contents"
                     : "login-type  center-contents"
                 }
@@ -183,7 +183,7 @@ class Login extends React.Component<ILoginProps, ILoginState> {
       let submit = false;
       if (prevState.submitting) {
         submit = false;
-      } else if (prevState.loginType === "SIGN_IN") {
+      } else if (prevState.loginType === "LOG_IN") {
         submit = prevState.email !== "" && prevState.password !== "";
       } else {
         submit =
@@ -294,7 +294,7 @@ class Login extends React.Component<ILoginProps, ILoginState> {
     axios.defaults.headers.post["Content-Type"] =
       "application/x-www-form-urlencoded";
 
-    if (this.state.loginType === "SIGN_IN") {
+    if (this.state.loginType === "LOG_IN") {
       axios
         .post(serverUrl + "/login", {
           email: this.state.email.replace(/\s/g, ""),
@@ -384,9 +384,9 @@ class Login extends React.Component<ILoginProps, ILoginState> {
     });
   };
 
-  private setLoginTypeSignIn = () => {
+  private setLoginTypeLogIn = () => {
     this.setState({
-      loginType: "SIGN_IN",
+      loginType: "LOG_IN",
       error: undefined
     });
   };

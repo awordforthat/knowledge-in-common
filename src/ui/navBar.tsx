@@ -1,29 +1,37 @@
 import * as React from "react";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import "../css/navBar.css";
+import "../css/global.css";
 
 class NavBar extends React.Component<RouteComponentProps, {}> {
   public render() {
     return (
       <div className="nav-bar">
         <Link className="brand" to="/">
-          Home
+          <div className="logo-container center-contents">
+            <div className="logo center-contents">KiC</div>
+          </div>
         </Link>
+
         <div className="button-bar">
           <div className="tab">
             <Link to="/about">About</Link>
           </div>
+          <div className="tab">
+            <Link to="/faq">FAQs</Link>
+          </div>
 
-          {window.localStorage["authToken"] !== "null" ? (
-            <div>
+          {window.localStorage["authToken"] !== "null" &&
+          window.localStorage["authToken"] !== undefined ? (
+            <React.Fragment>
               <div className="tab">
                 <Link to="/account">Account</Link>
               </div>
 
-              <div className="button" onClick={this.signOut}>
+              <div className="tab" onClick={this.signOut}>
                 Sign out
               </div>
-            </div>
+            </React.Fragment>
           ) : (
             <div />
           )}

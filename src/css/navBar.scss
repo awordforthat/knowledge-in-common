@@ -1,37 +1,62 @@
+$main-color: #222222;
 .nav-bar {
   width: 100vw;
   height: 10vh;
   min-height: 50px;
   max-height: 200px;
-  background: #222222;
-  color: white;
+  background: transparent;
+  font-variant: small-caps;
+  border-bottom: 1px solid rgba($main-color, 0.8);
+  color: $main-color;
   top: 0px;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  z-index: 99;
+  background: white;
+  // change here?
+
+  .logo-container {
+    width: 10vh;
+    height: 10vh;
+
+    justify-self: flex-start;
+    .logo {
+      min-width: 30px;
+      min-height: 30px;
+      width: 5vh;
+      height: 5vh;
+      border: 3px solid teal;
+      border-radius: 100%;
+    }
+  }
 
   a {
-    color: white;
+    color: $main-color;
     text-decoration: none;
   }
 
   a:visited {
-    color: white;
+    color: $main-color;
   }
 
   .button {
-    color: white;
-    border: 1px solid white;
+    color: $main-color;
+    border: 1px solid $main-color;
   }
 
   .button-bar {
     display: flex;
     flex-direction: row;
     justify-content: left;
-    width: 100%;
+
+    justify-self: flex-end;
 
     .tab {
       display: flex;
       justify-content: center;
       align-items: center;
-      border: 1px solid white;
+      width: 15vw;
     }
   }
 }

@@ -2,7 +2,7 @@
   "name": "knowledge-in-common",
   "version": "0.1.0",
   "private": true,
-  "proxy" :"http://localhost:8081",
+  "proxy": "http://localhost:8081",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
@@ -18,7 +18,6 @@
     "@types/uuid": "^7.0.2",
     "auth0-js": "^9.13.2",
     "axios": "^0.19.2",
-    "bcrypt": "^4.0.1",
     "node-sass": "^4.13.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
