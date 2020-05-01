@@ -40,22 +40,33 @@ export class Home extends React.Component<RouteComponentProps, IHomeState> {
   }
   public render() {
     return (
-      <div className="home">
+      <div id="home">
         <div className="background" />
         <section id="hero">
           <div id="hero-text" className="fit-parent center-contents">
             Learn. Teach. Connect.
           </div>
           <div className="button-container">
-            <button onClick={this.handleSignUp}>Sign up</button>
+            <button className="emphasis" onClick={this.handleSignUp}>
+              Sign up
+            </button>
             <button onClick={this.handleSignIn}>Log in</button>
           </div>
         </section>
         <section id="About">
-          <div className="title">About</div>
+          <div className="section-title">About</div>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eu felis
+          rhoncus, suscipit odio eu, aliquet justo. Nulla eget hendrerit magna.
+          Nulla sollicitudin turpis in odio tincidunt, sed cursus dui aliquet.
+          Ut ex est, maximus in massa nec, scelerisque condimentum turpis. Nunc
+          quam magna, commodo eget neque eget, volutpat maximus velit. Integer
+          interdum vestibulum vulputate. Ut id orci sollicitudin, sollicitudin
+          ex eget, ultrices dui. Vestibulum consequat, erat non fermentum
+          accumsan, eros leo fringilla odio, ut vehicula urna erat commodo
+          libero. Aliquam eu interdum leo.
         </section>
         <section>
-          <div className="title">Explore</div>
+          <div className="section-title">Explore</div>
           {this.renderTopics()}
         </section>
         <CSSTransition
@@ -107,11 +118,7 @@ export class Home extends React.Component<RouteComponentProps, IHomeState> {
 
   private renderTopics = () => {
     return this.state.topics.map(topic => {
-      return (
-        <div>
-          Name: {topic.name} Category: {topic.category}
-        </div>
-      );
+      return <div>{topic.name}</div>;
     });
   };
 }

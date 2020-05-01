@@ -11,7 +11,7 @@ export class CurrentUser {
     return window.localStorage["email"];
   }
 
-  public getToken(): string {
+  public static getToken(): string {
     return window.localStorage["authToken"];
   }
 
