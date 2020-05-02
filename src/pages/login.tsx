@@ -68,16 +68,6 @@ class Login extends React.Component<ILoginProps, ILoginState> {
             <div className="header">Hi there!</div>
             <div className="login-type-container">
               <div
-                onClick={this.setLoginTypeLogIn}
-                className={
-                  this.state.loginType === "LOG_IN"
-                    ? "login-type active  center-contents"
-                    : "login-type  center-contents"
-                }
-              >
-                LOG IN
-              </div>
-              <div
                 onClick={this.setLoginTypeSignUp}
                 className={
                   this.state.loginType === "SIGN_UP"
@@ -86,6 +76,16 @@ class Login extends React.Component<ILoginProps, ILoginState> {
                 }
               >
                 SIGN UP
+              </div>
+              <div
+                onClick={this.setLoginTypeLogIn}
+                className={
+                  this.state.loginType === "LOG_IN"
+                    ? "login-type active  center-contents"
+                    : "login-type  center-contents"
+                }
+              >
+                LOG IN
               </div>
             </div>
             <div>

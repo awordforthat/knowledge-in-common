@@ -6,14 +6,14 @@ import { NavigationBar } from "./ui/navBar";
 import "./index.css";
 import "./reset.css";
 import { About } from "./pages/about";
-import { TopicMenu } from "./pages/topicMenu";
+import { Connect } from "./pages/connect";
 
 function App() {
   return (
     <div className="main">
       <NavigationBar />
       <Route exact path="/" component={Home} />
-      <Route exact path="/choose" component={TopicMenu} />
+      <Route exact path="/connect" component={Connect} />
       <Route exact path="/user/:userId" component={Account} />
       <Route exact path="/about" component={About} />
     </div>

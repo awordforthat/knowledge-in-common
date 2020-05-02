@@ -97,7 +97,7 @@ export class Home extends React.Component<RouteComponentProps, IHomeState> {
         login: false
       },
       () => {
-        this.props.history.replace("/choose");
+        this.props.history.replace("/connect");
       }
     );
   };
