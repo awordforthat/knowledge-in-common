@@ -1,0 +1,47 @@
+@import "./global.scss";
+#connect {
+  width: 100vw;
+  position: relative;
+  font-family: $body-font;
+  color: $dark-purple;
+
+  #greeting {
+    width: 100%;
+    font-size: 30px;
+    margin-top: 20px;
+    padding-top: 20px;
+  }
+
+  #mode-switch {
+    margin-top: 30px;
+    position: relative;
+
+    .switcher {
+      margin-left: 10px;
+      user-select: none;
+      position: relative;
+      top: 10px;
+      transition: top 0.2s;
+      width: 50px;
+      &.bottom {
+        top: -10px;
+      }
+
+      .option {
+        transition: opacity 0.2s;
+        opacity: 1;
+        font-size: 20px;
+        &.deselected {
+          opacity: 0.3;
+        }
+      }
+    }
+  }
+
+  .topic-bank {
+    margin-top: 20px;
+    .topic {
+      margin: 10px;
+    }
+  }
+}

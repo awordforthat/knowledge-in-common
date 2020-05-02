@@ -1,12 +1,17 @@
 import * as React from "react";
+import axios from "axios";
+
+import { CSSTransition } from "react-transition-group";
+
 import { dataExists } from "../helpers";
 import { Footer } from "../ui/footer";
-import "../css/transitions.css";
-import axios from "axios";
 import { serverUrl } from "..";
-import { CurrentUser } from "../css/user";
+import { CurrentUser } from "../user";
 import { IUserData } from "../api/iUserData";
-import { CSSTransition } from "react-transition-group";
+
+import "../css/transitions.css";
+import "../css/connect.css";
+import { Topic } from "../ui/topic";
 
 interface IConnectState {
   mode: "LEARN" | "TEACH";
@@ -49,7 +54,6 @@ export class Connect extends React.Component<{}, IConnectState> {
     axios
       .get(serverUrl + "/topic")
       .then(res => {
-        console.log(res);
         let topics: string[] = [];
         res.data.data.forEach((topicObj: any) => {
           topics = topics.concat(topicObj.name);
@@ -67,21 +71,43 @@ export class Connect extends React.Component<{}, IConnectState> {
   public render() {
     if (dataExists(window.localStorage["authToken"])) {
       return (
-        <div>
+        <div id="connect">
           {!this.state.userData && !this.state.topics ? (
             <div>"Loading..."</div>
           ) : (
             <div />
           )}
-          hey there
-          {window.localStorage["username"] !== "undefined" &&
-          window.localStorage["username"] !== "null"
-            ? ", " + window.localStorage["username"] + "!"
-            : "!"}
-          <div>
+          <div id="greeting" className={"center-contents"}>
+            hey there
+            {window.localStorage["username"] !== "undefined" &&
+            window.localStorage["username"] !== "null"
+              ? ", " + window.localStorage["username"] + "!"
+              : "!"}
+          </div>
+          <div id="mode-switch" className={"center-contents"}>
             Today I want to
-            <div onClick={this.setModeLearn}>LEARN</div>
-            <div onClick={this.setModeTeach}>TEACH</div>
+            <div
+              className={
+                this.state.mode === "LEARN" ? "switcher top" : "switcher bottom"
+              }
+            >
+              <div
+                onClick={this.toggleLearningMode}
+                className={
+                  this.state.mode === "LEARN" ? "option" : "option deselected"
+                }
+              >
+                LEARN
+              </div>
+              <div
+                onClick={this.toggleLearningMode}
+                className={
+                  this.state.mode === "TEACH" ? "option" : "option deselected"
+                }
+              >
+                TEACH
+              </div>
+            </div>
           </div>
           <div id="topic-bank">
             <CSSTransition
@@ -99,7 +125,7 @@ export class Connect extends React.Component<{}, IConnectState> {
       );
     } else {
       return (
-        <div>
+        <div id="connect">
           <div>You've been signed out. Please sign in again.</div>
           <Footer />
         </div>
@@ -112,20 +138,22 @@ export class Connect extends React.Component<{}, IConnectState> {
       return <div>Looks like you don't have any topics yet. Add some?</div>;
     }
 
-    return topics.map((topic, index) => {
-      return <div key={"topic-" + index}>{topic}</div>;
+    const topicContents = topics.map((topic, index) => {
+      return (
+        <div key={"topic-" + index}>
+          <Topic name={topic} editable={true} />
+        </div>
+      );
     });
+
+    return <div className="topic-bank">{topicContents}</div>;
   };
 
-  private setModeLearn = () => {
-    this.setState({
-      mode: "LEARN"
-    });
-  };
-
-  private setModeTeach = () => {
-    this.setState({
-      mode: "TEACH"
+  private toggleLearningMode = () => {
+    this.setState(prevState => {
+      return {
+        mode: prevState.mode === "LEARN" ? "TEACH" : "LEARN"
+      };
     });
   };
 }

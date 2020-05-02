@@ -1,6 +1,5 @@
 import * as React from "react";
 import axios from "axios";
-import { ITopic } from "../api/iTopic";
 import { CSSTransition } from "react-transition-group";
 import { LoginPanel, LoginType } from "./login";
 import { RouteComponentProps } from "react-router-dom";
@@ -8,9 +7,11 @@ import { RouteComponentProps } from "react-router-dom";
 import "../css/home.css";
 import "../css/global.css";
 import "../css/transitions.css";
+import { Topic } from "../ui/topic";
+import { CurrentUser } from "../user";
 
 interface IHomeState {
-  topics: ITopic[];
+  topics: string[];
   login: boolean;
   loginType: LoginType;
 }
@@ -29,9 +30,12 @@ export class Home extends React.Component<RouteComponentProps, IHomeState> {
     axios
       .get("http://localhost:8081/topic")
       .then(result => {
-        console.log(result);
+        let topics: string[] = [];
+        result.data.data.forEach((topicObj: any) => {
+          topics = topics.concat(topicObj.name);
+        });
         this.setState({
-          topics: result.data["data"]
+          topics: topics
         });
       })
       .catch(err => {
@@ -46,12 +50,14 @@ export class Home extends React.Component<RouteComponentProps, IHomeState> {
           <div id="hero-text" className="fit-parent center-contents">
             Learn. Teach. Connect.
           </div>
-          <div className="button-container">
-            <button className="emphasis" onClick={this.handleSignUp}>
-              Sign up
-            </button>
-            <button onClick={this.handleSignIn}>Log in</button>
-          </div>
+          {!CurrentUser.isLoggedIn() && (
+            <div className="button-container">
+              <button className="emphasis" onClick={this.handleSignUp}>
+                Sign up
+              </button>
+              <button onClick={this.handleSignIn}>Log in</button>
+            </div>
+          )}
         </section>
         <section id="About">
           <div className="section-title">About</div>
@@ -118,7 +124,7 @@ export class Home extends React.Component<RouteComponentProps, IHomeState> {
 
   private renderTopics = () => {
     return this.state.topics.map(topic => {
-      return <div>{topic.name}</div>;
+      return <Topic editable={false} name={topic} />;
     });
   };
 }

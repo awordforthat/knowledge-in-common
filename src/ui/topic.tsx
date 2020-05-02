@@ -1,21 +1,20 @@
 import * as React from "react";
-import { ITopic } from "../api/iTopic";
+
+import "../css/topic.css";
 
 interface ITopicProps {
-  data: ITopic;
-  enabled: boolean;
-  selected: boolean;
+  name: string;
+  editable: boolean;
 }
-export class TopicField extends React.Component<ITopicProps, {}> {
+export class Topic extends React.Component<ITopicProps, {}> {
   constructor(props: ITopicProps) {
     super(props);
   }
 
   public render() {
     return (
-      <div>
-        <div>{this.props.data.name}</div>
-        <div>{this.props.data.category}</div>
+      <div className="topic rounded center-contents">
+        <div>{this.props.name}</div>
       </div>
     );
   }

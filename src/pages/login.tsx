@@ -3,7 +3,7 @@ import axios from "axios";
 
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
-import { CurrentUser } from "../css/user";
+import { CurrentUser } from "../user";
 
 import "../css/login.css";
 import "../css/transitions.css";

@@ -34,7 +34,7 @@ export class CurrentUser {
     window.localStorage["email"] = null;
   }
 
-  public isLoggedIn(): boolean {
+  public static isLoggedIn(): boolean {
     return window.localStorage["authToken"] !== "null";
   }
 }
