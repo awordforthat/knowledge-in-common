@@ -43,5 +43,19 @@
     .topic {
       margin: 10px;
     }
+
+    .bank-item.selected-teach {
+      .topic {
+        background-color: $teal;
+        border-color: $teal;
+      }
+    }
+
+    .bank-item.selected-learn {
+      .topic {
+        background-color: $orange;
+        border-color: $orange;
+      }
+    }
   }
 }
