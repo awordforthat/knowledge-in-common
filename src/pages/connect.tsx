@@ -19,8 +19,37 @@ interface IConnectState {
   userData?: IUserData;
   selectedToLearn: string[];
   selectedToTeach: string[];
-  allTopics?: string[];
+  allTopics?: any;
 }
+
+const letters = [
+  "a",
+  "b",
+  "c",
+  "d",
+  "e",
+  "f",
+  "g",
+  "h",
+  "i",
+  "j",
+  "k",
+  "l",
+  "m",
+  "n",
+  "o",
+  "p",
+  "q",
+  "r",
+  "s",
+  "t",
+  "u",
+  "v",
+  "w",
+  "x",
+  "y",
+  "z"
+];
 
 export class Connect extends React.Component<{}, IConnectState> {
   constructor(props: {}) {
@@ -49,8 +78,12 @@ export class Connect extends React.Component<{}, IConnectState> {
             learn: res.data.data.learn,
             teach: res.data.data.teach
           },
-          selectedToLearn: res.data.data.learn ? res.data.data.learn : [],
-          selectedToTeach: res.data.data.teach ? res.data.data.teach : []
+          selectedToLearn: res.data.data.learn
+            ? JSON.parse(JSON.stringify(res.data.data.learn))
+            : [],
+          selectedToTeach: res.data.data.teach
+            ? JSON.parse(JSON.stringify(res.data.data.teach))
+            : []
         });
       })
       .catch(err => {
@@ -66,7 +99,7 @@ export class Connect extends React.Component<{}, IConnectState> {
           topics = topics.concat(topicObj.name);
         });
         this.setState({
-          allTopics: topics
+          allTopics: this.groupTopics(topics)
         });
       })
       .catch(err => {
@@ -116,6 +149,7 @@ export class Connect extends React.Component<{}, IConnectState> {
               </div>
             </div>
           </div>
+
           <div id="topic-bank">
             <CSSTransition
               in={dataExists(this.state.allTopics)}
@@ -124,8 +158,10 @@ export class Connect extends React.Component<{}, IConnectState> {
               unmountOnExit={true}
             >
               <div>
-                {this.state.allTopics &&
-                  this.renderTopics(this.state.allTopics)}
+                {this.state.allTopics && this.renderTopics()}
+                <div id="reset-button" onClick={this.handleReset}>
+                  <img src="./img/reset.png" width={50} />
+                </div>
               </div>
             </CSSTransition>
           </div>
@@ -144,6 +180,41 @@ export class Connect extends React.Component<{}, IConnectState> {
       );
     }
   }
+
+  private groupTopics(topics: string[]): object {
+    // this method a good candidate for optimization
+    let alphaTopics: any = {};
+    letters.forEach(letter => {
+      alphaTopics[letter] = topics.filter(topic => {
+        return topic.substr(0, 1).toLowerCase() === letter;
+      });
+    });
+    return alphaTopics;
+  }
+
+  private handleReset = () => {
+    if (this.state.mode === "TEACH" && this.state.userData) {
+      if (this.state.userData.teach) {
+        console.log("resetting");
+        this.setState({
+          selectedToTeach: JSON.parse(
+            JSON.stringify(this.state.userData!.teach)
+          )
+        });
+      }
+    }
+
+    if (this.state.mode === "LEARN" && this.state.userData) {
+      if (this.state.userData.learn) {
+        console.log("resetting");
+        this.setState({
+          selectedToLearn: JSON.parse(
+            JSON.stringify(this.state.userData!.learn)
+          )
+        });
+      }
+    }
+  };
 
   private handleTopicSelection = (topic: string) => {
     // add this topic if it wasn't already there; remove it if it was
@@ -174,12 +245,12 @@ export class Connect extends React.Component<{}, IConnectState> {
     });
   };
 
-  private renderTopics = (topics: string[] | undefined) => {
+  private renderTopics = () => {
     if (!this.state.userData) {
       return <div>Please sign in again</div>;
     }
-    if (topics === undefined || topics.length === 0) {
-      return <div>Looks like you don't have any topics yet. Add some?</div>;
+    if (this.state.allTopics === undefined) {
+      return <div>No topics found. Reload the page to try again.</div>;
     }
 
     let userTopics: string[] | undefined =
@@ -191,28 +262,49 @@ export class Connect extends React.Component<{}, IConnectState> {
       userTopics = [];
     }
 
-    const topicContents = topics.map((topic, index) => {
-      const topicClasses = classnames({
-        "bank-item": true,
-        "selected-teach":
-          this.state.mode === "TEACH" &&
-          this.state.selectedToTeach.indexOf(topic) !== -1,
-        "selected-learn":
-          this.state.mode === "LEARN" &&
-          this.state.selectedToLearn.indexOf(topic) !== -1
-      });
-      return (
-        <div key={"topic-" + index} className={topicClasses}>
-          <Topic
-            name={topic}
-            editable={true}
-            onClick={this.handleTopicSelection}
-          />
-        </div>
-      );
-    });
+    const topicContents = Object.keys(this.state.allTopics).map(
+      (letter, index) => {
+        if (!this.state.allTopics) {
+          return <div />;
+        }
+        const letterContents: any = this.state.allTopics[letter].filter(
+          (topic: string) => {
+            return topic.substr(0, 1) === letter;
+          }
+        );
 
-    return <div className="topic-bank">{topicContents}</div>;
+        return (
+          <div className="alpha-section center-contents">
+            <div className={"topic-alpha-header center-contents"}>
+              {letter}
+              <div className="underline" />
+            </div>
+            {letterContents.map((topic: string) => {
+              const topicClasses = classnames({
+                "bank-item": true,
+                "selected-teach":
+                  this.state.mode === "TEACH" &&
+                  this.state.selectedToTeach.indexOf(topic) !== -1,
+                "selected-learn":
+                  this.state.mode === "LEARN" &&
+                  this.state.selectedToLearn.indexOf(topic) !== -1
+              });
+              return (
+                <div key={"topic-" + index} className={topicClasses}>
+                  <Topic
+                    name={topic}
+                    editable={true}
+                    onClick={this.handleTopicSelection}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        );
+      }
+    );
+
+    return <div className="topic-bank center-contents">{topicContents}</div>;
   };
 
   private toggleLearningMode = () => {
