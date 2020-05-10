@@ -1,4 +1,10 @@
+import { EventEmitter } from "events";
+
 export class CurrentUser {
+  public static emitter: EventEmitter = new EventEmitter();
+  public constructor() {
+    console.log(CurrentUser.emitter);
+  }
   public static getId(): string {
     return window.localStorage["id"];
   }
@@ -32,6 +38,7 @@ export class CurrentUser {
     window.localStorage["id"] = null;
     window.localStorage["username"] = null;
     window.localStorage["email"] = null;
+    CurrentUser.emitter.emit("logout");
   }
 
   public static isLoggedIn(): boolean {

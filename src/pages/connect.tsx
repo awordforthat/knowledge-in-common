@@ -19,6 +19,7 @@ interface IConnectState {
   userData?: IUserData;
   selectedToLearn: string[];
   selectedToTeach: string[];
+  editing: boolean;
   allTopics?: any;
 }
 
@@ -52,21 +53,27 @@ const letters = [
 ];
 
 export class Connect extends React.Component<{}, IConnectState> {
+  private numRenders: number = 0;
+
   constructor(props: {}) {
     super(props);
     this.state = {
       mode: "LEARN",
+      editing: false,
       selectedToLearn: [],
       selectedToTeach: []
     };
+    CurrentUser.emitter.addListener("logout", this.reset);
+  }
 
+  public componentWillMount() {
     // retrieve user
     axios
       .get(serverUrl + "/user", {
         headers: {
           authorization: "bearer " + CurrentUser.getToken()
         },
-        data: {
+        params: {
           id: CurrentUser.getId()
         }
       })
@@ -124,6 +131,17 @@ export class Connect extends React.Component<{}, IConnectState> {
               ? ", " + window.localStorage["username"] + "!"
               : "!"}
           </div>
+
+          <div
+            className="center-contents"
+            style={{ marginTop: 20, width: "100%" }}
+          >
+            <div
+              className="underline center-contents"
+              style={{ width: "80%" }}
+            />
+          </div>
+
           <div id="mode-switch" className={"center-contents"}>
             Today I want to
             <div
@@ -149,25 +167,62 @@ export class Connect extends React.Component<{}, IConnectState> {
               </div>
             </div>
           </div>
+          <div className="center-contents"> </div>
 
-          <div id="topic-bank">
+          <div id="request-panel">
             <CSSTransition
-              in={dataExists(this.state.allTopics)}
+              in={dataExists(this.state.allTopics) && !this.state.editing}
               classNames="fade"
               timeout={500}
               unmountOnExit={true}
             >
               <div>
-                {this.state.allTopics && this.renderTopics()}
-                <div id="reset-button" onClick={this.handleReset}>
-                  <img src="./img/reset.png" width={50} />
-                </div>
+                {this.renderSubsetTopics()}
+                FIND {this.state.mode === "TEACH"
+                  ? "STUDENTS"
+                  : "TEACHERS"}{" "}
+                with current topics or{" "}
+                <span onClick={this.toggleEditMode} className="cta">
+                  CUSTOMIZE
+                </span>
               </div>
             </CSSTransition>
           </div>
-
-          <div>
-            Look for {this.state.mode === "LEARN" ? "teachers" : "students"}
+          <div id="topic-bank">
+            <CSSTransition
+              in={dataExists(this.state.allTopics) && this.state.editing}
+              classNames="fade"
+              timeout={500}
+              unmountOnExit={true}
+            >
+              <React.Fragment>
+                <div>
+                  Click topics to add them. When you're done,{" "}
+                  <span onClick={this.toggleEditMode}>GO BACK</span> to search
+                  with these topics
+                </div>
+                <div>
+                  {this.state.allTopics &&
+                    this.state.editing &&
+                    this.renderTopics()}
+                </div>
+                <div id="action-buttons">
+                  <div
+                    id="reset-button"
+                    className="action-button center-contents"
+                    onClick={this.handleReset}
+                  >
+                    <img src="./img/reset.png" width={50} />
+                  </div>
+                  <div
+                    id="search-button"
+                    className="action-button center-contents"
+                  >
+                    <img src="./img/search.png" width={50} />
+                  </div>
+                </div>
+              </React.Fragment>
+            </CSSTransition>
           </div>
         </div>
       );
@@ -180,6 +235,15 @@ export class Connect extends React.Component<{}, IConnectState> {
       );
     }
   }
+
+  public reset = () => {
+    this.setState({
+      mode: "LEARN",
+      selectedToLearn: [],
+      selectedToTeach: [],
+      editing: false
+    });
+  };
 
   private groupTopics(topics: string[]): object {
     // this method a good candidate for optimization
@@ -195,7 +259,6 @@ export class Connect extends React.Component<{}, IConnectState> {
   private handleReset = () => {
     if (this.state.mode === "TEACH" && this.state.userData) {
       if (this.state.userData.teach) {
-        console.log("resetting");
         this.setState({
           selectedToTeach: JSON.parse(
             JSON.stringify(this.state.userData!.teach)
@@ -206,7 +269,6 @@ export class Connect extends React.Component<{}, IConnectState> {
 
     if (this.state.mode === "LEARN" && this.state.userData) {
       if (this.state.userData.learn) {
-        console.log("resetting");
         this.setState({
           selectedToLearn: JSON.parse(
             JSON.stringify(this.state.userData!.learn)
@@ -245,6 +307,49 @@ export class Connect extends React.Component<{}, IConnectState> {
     });
   };
 
+  private renderSubsetTopics = () => {
+    if (!this.state.userData) {
+      return <div>Please sign in again</div>;
+    }
+
+    const topics: string[] | undefined =
+      this.state.mode === "TEACH"
+        ? this.state.selectedToTeach
+        : this.state.selectedToLearn;
+
+    if (!topics || topics.length === 0) {
+      return (
+        <div className="center-contents">
+          Looks like you haven't chosen any topics to{" "}
+          {this.state.mode === "TEACH" ? "teach" : "learn"} yet.{" "}
+          <span
+            onClick={this.toggleEditMode}
+            className="rounded center-contents"
+          >
+            Add some?
+          </span>
+        </div>
+      );
+    } else {
+      const topicClass =
+        this.state.mode === "TEACH" ? "teach-mode" : "learn-mode";
+      return (
+        <div id={"subset-topic-bank"}>
+          {topics.map((topic, index) => {
+            return (
+              <div
+                key={"subset-topic-" + topic + "-" + index}
+                className={topicClass}
+              >
+                <Topic name={topic} editable={false} />
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+  };
+
   private renderTopics = () => {
     if (!this.state.userData) {
       return <div>Please sign in again</div>;
@@ -261,9 +366,10 @@ export class Connect extends React.Component<{}, IConnectState> {
     if (userTopics === undefined) {
       userTopics = [];
     }
+    this.numRenders += 1;
 
     const topicContents = Object.keys(this.state.allTopics).map(
-      (letter, index) => {
+      (letter, topicIndex) => {
         if (!this.state.allTopics) {
           return <div />;
         }
@@ -274,12 +380,15 @@ export class Connect extends React.Component<{}, IConnectState> {
         );
 
         return (
-          <div className="alpha-section center-contents">
+          <div
+            className="alpha-section center-contents"
+            key={"alpha-section-" + letter}
+          >
             <div className={"topic-alpha-header center-contents"}>
               {letter}
               <div className="underline" />
             </div>
-            {letterContents.map((topic: string) => {
+            {letterContents.map((topic: string, letterIndex: number) => {
               const topicClasses = classnames({
                 "bank-item": true,
                 "selected-teach":
@@ -290,7 +399,10 @@ export class Connect extends React.Component<{}, IConnectState> {
                   this.state.selectedToLearn.indexOf(topic) !== -1
               });
               return (
-                <div key={"topic-" + index} className={topicClasses}>
+                <div
+                  key={"topic-" + letter + "-" + letterIndex}
+                  className={topicClasses}
+                >
                   <Topic
                     name={topic}
                     editable={true}
@@ -305,6 +417,14 @@ export class Connect extends React.Component<{}, IConnectState> {
     );
 
     return <div className="topic-bank center-contents">{topicContents}</div>;
+  };
+
+  private toggleEditMode = () => {
+    this.setState(prevState => {
+      return {
+        editing: !prevState.editing
+      };
+    });
   };
 
   private toggleLearningMode = () => {

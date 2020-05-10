@@ -41,6 +41,7 @@ class Login extends React.Component<ILoginProps, ILoginState> {
       submitting: false,
       error: undefined
     };
+    CurrentUser.emitter.addListener("logout", this.reset);
   }
 
   public componentDidMount() {

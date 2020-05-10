@@ -2,6 +2,7 @@ import * as React from "react";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import "../css/navBar.css";
 import "../css/global.css";
+import { CurrentUser } from "../user";
 
 class NavBar extends React.Component<RouteComponentProps, {}> {
   public render() {
@@ -42,7 +43,7 @@ class NavBar extends React.Component<RouteComponentProps, {}> {
   }
 
   private signOut = () => {
-    window.localStorage["authToken"] = null;
+    CurrentUser.signOut();
     this.props.history.replace("/");
   };
 }
