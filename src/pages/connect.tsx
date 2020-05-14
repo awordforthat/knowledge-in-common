@@ -176,19 +176,33 @@ export class Connect extends React.Component<{}, IConnectState> {
               timeout={500}
               unmountOnExit={true}
             >
-              <div>
+              <div
+                className={
+                  this.state.mode === "TEACH"
+                    ? "request teach"
+                    : "request learn"
+                }
+              >
                 {this.renderSubsetTopics()}
-                FIND {this.state.mode === "TEACH"
-                  ? "STUDENTS"
-                  : "TEACHERS"}{" "}
-                with current topics or{" "}
-                <span onClick={this.toggleEditMode} className="cta">
-                  CUSTOMIZE
-                </span>
+                <div id="find-or-customize">
+                  <div id="find-button" className="center-contents">
+                    <button className="center-contents rounded cta">
+                      FIND{" "}
+                      {this.state.mode === "TEACH" ? "STUDENTS" : "TEACHERS"}
+                    </button>
+                    <span>or</span>
+                    <button
+                      onClick={this.toggleEditMode}
+                      className="subtle-cta"
+                    >
+                      CUSTOMIZE
+                    </button>
+                  </div>
+                </div>
               </div>
             </CSSTransition>
           </div>
-          <div id="topic-bank">
+          <div className="request">
             <CSSTransition
               in={dataExists(this.state.allTopics) && this.state.editing}
               classNames="fade"
@@ -334,7 +348,7 @@ export class Connect extends React.Component<{}, IConnectState> {
       const topicClass =
         this.state.mode === "TEACH" ? "teach-mode" : "learn-mode";
       return (
-        <div id={"subset-topic-bank"}>
+        <div className={"subset-topic-bank topic-bank center-contents"}>
           {topics.map((topic, index) => {
             return (
               <div
@@ -366,55 +380,52 @@ export class Connect extends React.Component<{}, IConnectState> {
     if (userTopics === undefined) {
       userTopics = [];
     }
-    this.numRenders += 1;
 
-    const topicContents = Object.keys(this.state.allTopics).map(
-      (letter, topicIndex) => {
-        if (!this.state.allTopics) {
-          return <div />;
-        }
-        const letterContents: any = this.state.allTopics[letter].filter(
-          (topic: string) => {
-            return topic.substr(0, 1) === letter;
-          }
-        );
-
-        return (
-          <div
-            className="alpha-section center-contents"
-            key={"alpha-section-" + letter}
-          >
-            <div className={"topic-alpha-header center-contents"}>
-              {letter}
-              <div className="underline" />
-            </div>
-            {letterContents.map((topic: string, letterIndex: number) => {
-              const topicClasses = classnames({
-                "bank-item": true,
-                "selected-teach":
-                  this.state.mode === "TEACH" &&
-                  this.state.selectedToTeach.indexOf(topic) !== -1,
-                "selected-learn":
-                  this.state.mode === "LEARN" &&
-                  this.state.selectedToLearn.indexOf(topic) !== -1
-              });
-              return (
-                <div
-                  key={"topic-" + letter + "-" + letterIndex}
-                  className={topicClasses}
-                >
-                  <Topic
-                    name={topic}
-                    editable={true}
-                    onClick={this.handleTopicSelection}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        );
+    const topicContents = Object.keys(this.state.allTopics).map(letter => {
+      if (!this.state.allTopics) {
+        return <div />;
       }
-    );
+      const letterContents: any = this.state.allTopics[letter].filter(
+        (topic: string) => {
+          return topic.substr(0, 1) === letter;
+        }
+      );
+
+      return (
+        <div
+          className="alpha-section center-contents"
+          key={"alpha-section-" + letter}
+        >
+          <div className={"topic-alpha-header center-contents"}>
+            {letter}
+            <div className="underline" />
+          </div>
+          {letterContents.map((topic: string, letterIndex: number) => {
+            const topicClasses = classnames({
+              "bank-item": true,
+              "selected-teach":
+                this.state.mode === "TEACH" &&
+                this.state.selectedToTeach.indexOf(topic) !== -1,
+              "selected-learn":
+                this.state.mode === "LEARN" &&
+                this.state.selectedToLearn.indexOf(topic) !== -1
+            });
+            return (
+              <div
+                key={"topic-" + letter + "-" + letterIndex}
+                className={topicClasses}
+              >
+                <Topic
+                  name={topic}
+                  editable={true}
+                  onClick={this.handleTopicSelection}
+                />
+              </div>
+            );
+          })}
+        </div>
+      );
+    });
 
     return <div className="topic-bank center-contents">{topicContents}</div>;
   };

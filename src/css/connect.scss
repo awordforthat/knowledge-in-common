@@ -40,6 +40,53 @@
     }
   }
 
+  #request-panel {
+    position: relative;
+    .request {
+      position: absolute;
+      top: 0px;
+      width: 100%;
+
+      .subset-topic-bank {
+        display: flex;
+        flex-direction: row;
+      }
+
+      #find-or-customize {
+        margin-top: 50px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        .subtle-cta {
+          width: fit-content;
+        }
+        button {
+          width: 150px;
+          height: 45px;
+          border: none;
+          margin-right: 15px;
+        }
+      }
+
+      &.teach {
+        .cta {
+          background: $teal;
+          color: white;
+        }
+      }
+
+      &.learn {
+        .cta {
+          background: $orange;
+          color: white;
+        }
+      }
+    }
+  }
+
   #action-buttons {
     position: fixed;
     right: 10px;
@@ -64,32 +111,21 @@
     }
   }
 
-  #subset-topic-bank {
-    .topic {
-      border: none;
-    }
-
-    .learn-mode {
-      .topic {
-        background: $orange;
-        color: white;
-      }
-    }
-
-    .teach-mode {
-      .topic {
-        background: $teal;
-        color: white;
-      }
-    }
-  }
-
   .topic-bank {
+    position: absolute;
+    top: 0px;
     margin-top: 20px;
-    display: flex;
     flex-direction: column;
     width: 100%;
     position: relative;
+    flex-wrap: wrap;
+
+    .topic {
+      box-sizing: border-box;
+      margin: 10px;
+      height: 40px;
+      width: 200px;
+    }
 
     .alpha-section {
       display: flex;
@@ -106,12 +142,6 @@
         .underline {
           width: 400px;
         }
-      }
-      .topic {
-        box-sizing: border-box;
-        margin: 10px;
-        height: 40px;
-        width: 200px;
       }
 
       .bank-item {
@@ -130,6 +160,26 @@
           border: 4px solid $orange;
         }
       }
+    }
+  }
+
+  @media (max-width: 800px) {
+    .topic-bank {
+      .topic {
+        width: 60vw;
+      }
+    }
+  }
+
+  @media (max-width: 1200px) {
+    .topic-grid {
+      grid-auto-columns: auto auto auto;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .topic-grid {
+      grid-auto-columns: auto auto auto auto;
     }
   }
 }
