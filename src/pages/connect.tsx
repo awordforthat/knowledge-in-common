@@ -13,6 +13,7 @@ import { IUserData } from "../api/iUserData";
 import "../css/transitions.css";
 import "../css/connect.css";
 import { Topic } from "../ui/topic";
+import { ITopic } from "../api/iTopic";
 
 interface IConnectState {
   mode: "LEARN" | "TEACH";
@@ -101,10 +102,8 @@ export class Connect extends React.Component<{}, IConnectState> {
     axios
       .get(serverUrl + "/topic")
       .then(res => {
-        let topics: string[] = [];
-        res.data.data.forEach((topicObj: any) => {
-          topics = topics.concat(topicObj.name);
-        });
+        let topics: ITopic[] = res.data.data;
+
         this.setState({
           allTopics: this.groupTopics(topics)
         });
@@ -264,12 +263,12 @@ export class Connect extends React.Component<{}, IConnectState> {
     });
   };
 
-  private groupTopics(topics: string[]): object {
+  private groupTopics(topics: ITopic[]): ITopic[] {
     // this method a good candidate for optimization
     let alphaTopics: any = {};
     letters.forEach(letter => {
       alphaTopics[letter] = topics.filter(topic => {
-        return topic.substr(0, 1).toLowerCase() === letter;
+        return topic.name.substr(0, 1).toLowerCase() === letter;
       });
     });
     return alphaTopics;
@@ -390,9 +389,18 @@ export class Connect extends React.Component<{}, IConnectState> {
       if (!this.state.allTopics) {
         return <div />;
       }
-      const letterContents: any = this.state.allTopics[letter].filter(
-        (topic: string) => {
-          return topic.substr(0, 1) === letter;
+      const letterContents: ITopic[] = this.state.allTopics[letter].filter(
+        (topic: ITopic) => {
+          let inMode;
+          // future me: these are intentionally backwards.
+          // if the user wants to learn a topic, it has to be teachable;
+          // if they want to teach a topic, it has to be learnable
+          if (this.state.mode === "TEACH") {
+            inMode = topic.learnable;
+          } else if (this.state.mode === "LEARN") {
+            inMode = topic.teachable;
+          }
+          return topic.name.substr(0, 1) === letter && inMode;
         }
       );
 
@@ -406,15 +414,15 @@ export class Connect extends React.Component<{}, IConnectState> {
             <div className="underline" />
           </div>
           <div className="topics">
-            {letterContents.map((topic: string, letterIndex: number) => {
+            {letterContents.map((topic: ITopic, letterIndex: number) => {
               const topicClasses = classnames({
                 "bank-item": true,
                 "selected-teach":
                   this.state.mode === "TEACH" &&
-                  this.state.selectedToTeach.indexOf(topic) !== -1,
+                  this.state.selectedToTeach.indexOf(topic.name) !== -1,
                 "selected-learn":
                   this.state.mode === "LEARN" &&
-                  this.state.selectedToLearn.indexOf(topic) !== -1
+                  this.state.selectedToLearn.indexOf(topic.name) !== -1
               });
               return (
                 <div
@@ -422,7 +430,7 @@ export class Connect extends React.Component<{}, IConnectState> {
                   className={topicClasses}
                 >
                   <Topic
-                    name={topic}
+                    name={topic.name}
                     editable={true}
                     onClick={this.handleTopicSelection}
                   />

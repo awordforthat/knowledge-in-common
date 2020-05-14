@@ -1,5 +1,6 @@
 export interface ITopic {
-  id: number;
+  id?: string;
   name: string;
-  category: string;
+  teachable: boolean;
+  learnable: boolean;
 }
