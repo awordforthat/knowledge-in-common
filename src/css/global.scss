@@ -45,13 +45,33 @@ $body-font: "Quicksand", sans-serif;
 .cta {
   background: $orange;
   color: white;
+  width: 150px;
+  height: 45px;
+  border: none;
+  margin: 15px;
+  transition: transform 0.1s;
+  transform-origin: center;
 }
 .cta:active {
-  background-color: $orange;
+  transform: scale(1.1);
+}
+.teach {
+  .cta {
+    background: $teal;
+    color: white;
+  }
+}
+
+.learn {
+  .cta {
+    background: $orange;
+    color: white;
+  }
 }
 
 .subtle-cta {
   background: none;
+  border: none;
   text-decoration: underline;
 }
 

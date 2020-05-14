@@ -210,10 +210,15 @@ export class Connect extends React.Component<{}, IConnectState> {
               unmountOnExit={true}
             >
               <React.Fragment>
-                <div>
+                <div
+                  id="customize-prompt"
+                  className={this.state.mode === "TEACH" ? "teach" : "learn"}
+                >
                   Click topics to add them. When you're done,{" "}
-                  <span onClick={this.toggleEditMode}>GO BACK</span> to search
-                  with these topics
+                  <button className="cta rounded" onClick={this.toggleEditMode}>
+                    GO BACK
+                  </button>{" "}
+                  to search with these topics
                 </div>
                 <div>
                   {this.state.allTopics &&
@@ -400,29 +405,31 @@ export class Connect extends React.Component<{}, IConnectState> {
             {letter}
             <div className="underline" />
           </div>
-          {letterContents.map((topic: string, letterIndex: number) => {
-            const topicClasses = classnames({
-              "bank-item": true,
-              "selected-teach":
-                this.state.mode === "TEACH" &&
-                this.state.selectedToTeach.indexOf(topic) !== -1,
-              "selected-learn":
-                this.state.mode === "LEARN" &&
-                this.state.selectedToLearn.indexOf(topic) !== -1
-            });
-            return (
-              <div
-                key={"topic-" + letter + "-" + letterIndex}
-                className={topicClasses}
-              >
-                <Topic
-                  name={topic}
-                  editable={true}
-                  onClick={this.handleTopicSelection}
-                />
-              </div>
-            );
-          })}
+          <div className="topics">
+            {letterContents.map((topic: string, letterIndex: number) => {
+              const topicClasses = classnames({
+                "bank-item": true,
+                "selected-teach":
+                  this.state.mode === "TEACH" &&
+                  this.state.selectedToTeach.indexOf(topic) !== -1,
+                "selected-learn":
+                  this.state.mode === "LEARN" &&
+                  this.state.selectedToLearn.indexOf(topic) !== -1
+              });
+              return (
+                <div
+                  key={"topic-" + letter + "-" + letterIndex}
+                  className={topicClasses}
+                >
+                  <Topic
+                    name={topic}
+                    editable={true}
+                    onClick={this.handleTopicSelection}
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
       );
     });

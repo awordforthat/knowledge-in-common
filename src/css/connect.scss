@@ -64,27 +64,17 @@
           width: fit-content;
         }
         button {
-          width: 150px;
-          height: 45px;
-          border: none;
           margin-right: 15px;
         }
       }
-
-      &.teach {
-        .cta {
-          background: $teal;
-          color: white;
-        }
-      }
-
-      &.learn {
-        .cta {
-          background: $orange;
-          color: white;
-        }
-      }
     }
+  }
+
+  #customize-prompt {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   #action-buttons {
@@ -144,22 +134,35 @@
         }
       }
 
-      .bank-item {
-        .topic {
-          transition: border 0.2s;
+      .topics {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        width: 100%;
+        justify-content: center;
+        .bank-item {
+          .topic {
+            transition: border 0.2s;
+          }
         }
-      }
-      .bank-item.selected-teach {
-        .topic {
-          border: 4px solid $teal;
+        .bank-item.selected-teach {
+          .topic {
+            border: 4px solid $teal;
+          }
         }
-      }
 
-      .bank-item.selected-learn {
-        .topic {
-          border: 4px solid $orange;
+        .bank-item.selected-learn {
+          .topic {
+            border: 4px solid $orange;
+          }
         }
       }
+    }
+  }
+
+  @media (max-width: 700px) {
+    #customize-prompt {
+      flex-direction: column;
     }
   }
 
