@@ -42,6 +42,9 @@ export class CurrentUser {
   }
 
   public static isLoggedIn(): boolean {
-    return window.localStorage["authToken"] !== "null";
+    return (
+      window.localStorage["authToken"] !== "null" &&
+      window.localStorage["authToken"] !== undefined
+    );
   }
 }
