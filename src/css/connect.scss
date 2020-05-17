@@ -7,24 +7,32 @@
 
   #greeting {
     width: 100%;
-    font-size: 40px;
+    font-size: 20px;
     margin-top: 20px;
     padding-top: 20px;
+  }
+
+  #prompt {
+    width: 100%;
+    font-size: 30px;
+    margin-top: 20px;
   }
 
   #mode-switch {
     margin-top: 30px;
     margin-bottom: 30px;
     font-size: 20px;
-    position: relative;
-
+    #mode-prompt {
+      position: relative;
+      width: fit-content;
+    }
     .switcher {
       margin-left: 10px;
       user-select: none;
       position: relative;
       top: 10px;
       transition: top 0.2s;
-      width: 50px;
+      width: fit-content;
       &.bottom {
         top: -10px;
       }
@@ -68,6 +76,10 @@
         }
       }
     }
+  }
+
+  #customize-panel {
+    position: relative;
   }
 
   #customize-prompt {
@@ -157,6 +169,37 @@
           }
         }
       }
+    }
+  }
+
+  #matches-container {
+    margin: 20px;
+    border: 3px solid black;
+    .topic {
+      width: fit-content;
+    }
+
+    .username {
+      text-transform: uppercase;
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    .username.teach {
+      color: $teal;
+    }
+    .username.learn {
+      color: $orange;
+    }
+  }
+
+  @media (max-width: 470px) {
+    #greeting {
+      font-size: 16px;
+    }
+    #prompt {
+      font-weight: bolder;
+      font-size: 25px;
     }
   }
 

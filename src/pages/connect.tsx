@@ -14,12 +14,23 @@ import "../css/transitions.css";
 import "../css/connect.css";
 import { Topic } from "../ui/topic";
 import { ITopic } from "../api/iTopic";
+import classNames from "classnames";
+
+interface IMatch {
+  username: string;
+  id: string;
+  topics: string[];
+}
 
 interface IConnectState {
+  canInteract: boolean;
+  learnMatches?: IMatch[];
+  teachMatches?: IMatch[];
   mode: "LEARN" | "TEACH";
   userData?: IUserData;
   selectedToLearn: string[];
   selectedToTeach: string[];
+  selectedUser?: IMatch;
   editing: boolean;
   allTopics?: any;
 }
@@ -54,11 +65,10 @@ const letters = [
 ];
 
 export class Connect extends React.Component<{}, IConnectState> {
-  private numRenders: number = 0;
-
   constructor(props: {}) {
     super(props);
     this.state = {
+      canInteract: false,
       mode: "LEARN",
       editing: false,
       selectedToLearn: [],
@@ -80,6 +90,7 @@ export class Connect extends React.Component<{}, IConnectState> {
       })
       .then(res => {
         this.setState({
+          canInteract: true,
           userData: {
             userName: res.data.data.username,
             email: res.data.data.email,
@@ -130,6 +141,9 @@ export class Connect extends React.Component<{}, IConnectState> {
               ? ", " + window.localStorage["username"] + "!"
               : "!"}
           </div>
+          <div id="prompt" className="center-contents">
+            what's on the syllabus today?
+          </div>
 
           <div
             className="center-contents"
@@ -141,36 +155,60 @@ export class Connect extends React.Component<{}, IConnectState> {
             />
           </div>
 
-          <div id="mode-switch" className={"center-contents"}>
-            Today I want to
-            <div
-              className={
-                this.state.mode === "LEARN" ? "switcher top" : "switcher bottom"
-              }
-            >
-              <div
-                onClick={this.toggleLearningMode}
-                className={
-                  this.state.mode === "LEARN" ? "option" : "option deselected"
-                }
-              >
-                LEARN
+          <CSSTransition
+            in={
+              !dataExists(this.state.teachMatches) &&
+              !dataExists(this.state.learnMatches)
+            }
+            timeout={500}
+            classNames="fade"
+          >
+            <div id="mode-switch" className={"center-contents"}>
+              <div id="mode-prompt">
+                I want to
+                <span
+                  style={{ position: "absolute", right: "-80px", top: "-2px" }}
+                >
+                  :
+                </span>
               </div>
               <div
-                onClick={this.toggleLearningMode}
                 className={
-                  this.state.mode === "TEACH" ? "option" : "option deselected"
+                  this.state.mode === "LEARN"
+                    ? "switcher top"
+                    : "switcher bottom"
                 }
               >
-                TEACH
+                <div
+                  onClick={this.toggleLearningMode}
+                  className={
+                    this.state.mode === "LEARN" ? "option" : "option deselected"
+                  }
+                >
+                  LEARN
+                </div>
+                <div
+                  onClick={this.toggleLearningMode}
+                  className={
+                    this.state.mode === "TEACH" ? "option" : "option deselected"
+                  }
+                >
+                  TEACH
+                </div>
               </div>
             </div>
-          </div>
+          </CSSTransition>
+
           <div className="center-contents"> </div>
 
           <div id="request-panel">
             <CSSTransition
-              in={dataExists(this.state.allTopics) && !this.state.editing}
+              in={
+                dataExists(this.state.allTopics) &&
+                !this.state.editing &&
+                !this.state.learnMatches &&
+                !this.state.teachMatches
+              }
               classNames="fade"
               timeout={500}
               unmountOnExit={true}
@@ -185,7 +223,10 @@ export class Connect extends React.Component<{}, IConnectState> {
                 {this.renderSubsetTopics()}
                 <div id="find-or-customize">
                   <div id="find-button" className="center-contents">
-                    <button className="center-contents rounded cta">
+                    <button
+                      className="center-contents rounded cta"
+                      onPointerUp={this.findMatches}
+                    >
                       FIND{" "}
                       {this.state.mode === "TEACH" ? "STUDENTS" : "TEACHERS"}
                     </button>
@@ -194,14 +235,42 @@ export class Connect extends React.Component<{}, IConnectState> {
                       onClick={this.toggleEditMode}
                       className="subtle-cta"
                     >
-                      CUSTOMIZE
+                      EDIT TOPICS
                     </button>
                   </div>
                 </div>
               </div>
             </CSSTransition>
+            <div id="results">
+              <CSSTransition
+                in={
+                  (this.state.mode === "LEARN" &&
+                    dataExists(this.state.learnMatches)) ||
+                  (this.state.mode === "TEACH" &&
+                    dataExists(this.state.teachMatches))
+                }
+                timeout={500}
+                classNames="fade"
+                unmountOnExit={true}
+              >
+                <div id="matches-container">
+                  <div id="matches-prompt">
+                    Select a user from the list below to connect with them
+                  </div>
+                  <div id="matches-content">{this.renderMatches()}</div>
+                  <div>
+                    Not what you wanted?{" "}
+                    <button onPointerUp={this.handleClearMatches}>
+                      Go back
+                    </button>{" "}
+                    to search again
+                  </div>
+                </div>
+              </CSSTransition>
+            </div>
           </div>
-          <div className="request">
+
+          <div id="customize-panel">
             <CSSTransition
               in={dataExists(this.state.allTopics) && this.state.editing}
               classNames="fade"
@@ -263,6 +332,75 @@ export class Connect extends React.Component<{}, IConnectState> {
     });
   };
 
+  private arrayToString = (arr: string[]) => {
+    let s = "";
+
+    arr.forEach((val, index) => {
+      if (index === 0) {
+        s = s.concat(val);
+      } else if (index === arr.length - 1) {
+        s = s.concat(", and " + val);
+      } else {
+        s = s.concat(", " + val);
+      }
+    });
+
+    return s;
+  };
+
+  private findMatches = (e: React.PointerEvent) => {
+    if (!this.state.canInteract) {
+      return;
+    }
+    this.setState({
+      canInteract: false
+    });
+
+    axios
+      .post(serverUrl + "/connect", {
+        mode: this.state.mode.toLowerCase(),
+        id: CurrentUser.getId(),
+        topics:
+          this.state.mode === "LEARN"
+            ? this.state.selectedToLearn
+            : this.state.selectedToTeach
+      })
+      .then(result => {
+        const parsedMatches: IMatch[] = [];
+        result.data.users.forEach((obj: any) => {
+          if (
+            dataExists(obj.id) &&
+            dataExists(obj.username) &&
+            dataExists(obj.topics)
+          ) {
+            parsedMatches.push(Object.assign({}, obj));
+          }
+        });
+
+        this.setState(prevState => {
+          if (prevState.mode === "LEARN") {
+            return {
+              learnMatches: parsedMatches,
+              teachMatches: prevState.teachMatches
+            };
+          } else {
+            return {
+              learnMatches: prevState.learnMatches,
+              teachMatches: parsedMatches
+            };
+          }
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      })
+      .finally(() => {
+        this.setState({
+          canInteract: true
+        });
+      });
+  };
+
   private groupTopics(topics: ITopic[]): ITopic[] {
     // this method a good candidate for optimization
     let alphaTopics: any = {};
@@ -273,6 +411,13 @@ export class Connect extends React.Component<{}, IConnectState> {
     });
     return alphaTopics;
   }
+
+  private handleClearMatches = (e: React.PointerEvent) => {
+    this.setState({
+      learnMatches: undefined,
+      teachMatches: undefined
+    });
+  };
 
   private handleReset = () => {
     if (this.state.mode === "TEACH" && this.state.userData) {
@@ -323,6 +468,50 @@ export class Connect extends React.Component<{}, IConnectState> {
         };
       }
     });
+  };
+
+  private renderMatches = () => {
+    if (this.state.mode === "TEACH" && !dataExists(this.state.teachMatches)) {
+      return <div />;
+    }
+
+    if (this.state.mode === "LEARN" && !dataExists(this.state.learnMatches)) {
+      return <div />;
+    }
+
+    let matches: any;
+    let topicArray: string[];
+    let matchPhrase: string;
+    let matchesArray: IMatch[];
+    if (this.state.mode === "LEARN") {
+      topicArray = this.state.selectedToLearn;
+      matchPhrase = " can teach you ";
+      matchesArray = this.state.learnMatches!;
+    } else {
+      topicArray = this.state.selectedToTeach;
+      matchPhrase = " wants to learn ";
+      matchesArray = this.state.teachMatches!;
+    }
+
+    matches = topicArray.map(topic => {
+      const randomUser = matchesArray![
+        Math.floor(Math.random() * matchesArray.length)
+      ];
+      const usernameClasses = classNames({
+        username: true,
+        teach: this.state.mode === "TEACH",
+        learn: this.state.mode === "LEARN"
+      });
+      return (
+        <div className="match">
+          <span className={usernameClasses}>{randomUser.username}</span>{" "}
+          <span>{matchPhrase}</span>
+          <Topic name={topic} editable={false} />
+        </div>
+      );
+    });
+
+    return <div id="matches">{matches}</div>;
   };
 
   private renderSubsetTopics = () => {
