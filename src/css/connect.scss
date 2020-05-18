@@ -22,6 +22,7 @@
     margin-top: 30px;
     margin-bottom: 30px;
     font-size: 20px;
+
     #mode-prompt {
       position: relative;
       width: fit-content;
@@ -174,22 +175,75 @@
 
   #matches-container {
     margin: 20px;
-    border: 3px solid black;
+    position: relative;
     .topic {
       width: fit-content;
     }
 
-    .username {
-      text-transform: uppercase;
-      font-weight: bold;
-      font-size: 20px;
+    #matches-prompt {
+      position: relative;
+      top: -40px;
+      z-index: 2;
+      #matches-prompt-header {
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+      #matches-prompt-redirect {
+        font-size: 12px;
+      }
+    }
+
+    #matches-content {
+      z-index: 1;
+    }
+
+    .radio-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 20px;
+      border: 1px solid $dark-purple;
+      margin: 10px;
+      .radio-dot-fill {
+        width: 14px;
+        height: 14px;
+        border-radius: 14px;
+        background: $dark-purple;
+        transform-origin: center;
+        transition: transform 0.1s;
+        transform: scale(0);
+
+        &.selected {
+          transform: scale(1);
+        }
+      }
+    }
+    .match {
+      margin-top: 10px;
+      justify-content: flex-start;
+      .username {
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 20px;
+        margin-right: 10px;
+      }
+      .match-phrase {
+        margin-right: 10px;
+      }
     }
 
     .username.teach {
       color: $teal;
+
+      &.selected {
+        border-bottom: 2px solid $teal;
+      }
     }
     .username.learn {
       color: $orange;
+
+      &.selected {
+        border-bottom: 2px solid $orange;
+      }
     }
   }
 

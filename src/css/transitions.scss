@@ -32,3 +32,35 @@
 .fade-exit-done {
   opacity: 0;
 }
+
+// fade and vertical squish
+.fade-and-squish {
+  opacity: 0;
+  transform: scaleY(0);
+  transition: opacity 200ms, transform 200ms;
+}
+
+.fade-and-squish-enter-active {
+  transform-origin: top;
+  opacity: 1;
+  transform: scaleY(1);
+  transition: opacity 200ms, transform 200ms;
+}
+
+.fade-and-squish-exit {
+  opacity: 1;
+  transform: scaleY(1);
+  transition: opacity 200ms, transform 200ms;
+}
+
+.fade-and-squish-exit-active {
+  transform-origin: top;
+  opacity: 0;
+  transform: scaleY(0);
+  transition: opacity 200ms, transform 200ms;
+}
+
+.fade-and-squish-exit-done {
+  transform: scaleY(0);
+  opacity: 0;
+}
