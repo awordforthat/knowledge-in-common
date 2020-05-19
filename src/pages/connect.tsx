@@ -202,6 +202,7 @@ export class Connect extends React.Component<{}, IConnectState> {
               in={this.state.appState === "SEARCHING"}
               classNames="fade"
               timeout={500}
+              unmountOnExit={true}
             >
               <div
                 className={
