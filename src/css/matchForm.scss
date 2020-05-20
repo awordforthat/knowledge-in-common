@@ -1,3 +1,5 @@
+@import "../css/global.scss";
+
 #match-form {
   width: 100%;
   max-width: 650px;
@@ -34,16 +36,32 @@
   }
 
   .question {
-    margin-top: 20px;
-    label {
+    margin-top: 40px;
+    .label {
+      width: 90%;
+      text-align: left;
+      line-height: 20px;
       margin-left: 20px;
-      margin-bottom: 20px;
+      overflow: wrap;
     }
 
     .radio-option {
-      margin-left: 20px;
+      margin-left: 40px;
+      margin-bottom: 10px;
+      display: flex;
+      width: fit-content;
+      align-content: center;
+      align-items: flex-start;
+      input[type="radio"] {
+        background: transparent;
+        background-color: white;
+        width: 20px;
+        height: 20px;
+        color: $dark-purple;
+        margin: 0px;
+        margin-right: 20px;
+      }
     }
-
     #q2-radio-options {
       margin-top: 20px;
     }
@@ -69,5 +87,11 @@
       bottom: -25px;
       right: 0px;
     }
+  }
+
+  #button-bank {
+    margin-top: 60px;
+    display: flex;
+    justify-content: flex-end;
   }
 }

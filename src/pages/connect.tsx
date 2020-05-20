@@ -16,7 +16,7 @@ import { Topic } from "../ui/topic";
 import { ITopic } from "../api/iTopic";
 import { IMatch } from "../api/iMatch";
 import classNames from "classnames";
-import { MatchForm } from "../ui/matchForm";
+import { MatchForm, IMatchFormResponse } from "../ui/matchForm";
 
 interface IConnectState {
   appState: "EDITING" | "MATCHING" | "SEARCHING";
@@ -241,26 +241,31 @@ export class Connect extends React.Component<{}, IConnectState> {
               unmountOnExit={true}
             >
               <div>
-                <div id="matches-container">
-                  <div id="matches-prompt">
-                    <div id="matches-prompt-header" className="center-contents">
-                      Select a user from the list below to connect with them
-                    </div>
-                    <div
-                      id="matches-prompt-redirect"
-                      className="center-contents"
-                    >
-                      (Not what you wanted?{" "}
-                      <button
-                        onPointerUp={this.handleClearMatches}
-                        className="subtle-cta"
+                <div className="center-contents">
+                  <div id="matches-container">
+                    <div id="matches-prompt">
+                      <div
+                        id="matches-prompt-header"
+                        className="center-contents"
                       >
-                        GO BACK
-                      </button>{" "}
-                      to search again.)
+                        Select a user from the list below to connect with them
+                      </div>
+                      <div
+                        id="matches-prompt-redirect"
+                        className="center-contents"
+                      >
+                        (Not what you wanted?{" "}
+                        <button
+                          onPointerUp={this.handleClearMatches}
+                          className="subtle-cta"
+                        >
+                          GO BACK
+                        </button>{" "}
+                        to search again.)
+                      </div>
                     </div>
+                    <div id="matches-content">{this.renderMatches()}</div>
                   </div>
-                  <div id="matches-content">{this.renderMatches()}</div>
                 </div>
                 <div id="communication-container">
                   <CSSTransition
@@ -269,11 +274,14 @@ export class Connect extends React.Component<{}, IConnectState> {
                     classNames="fade"
                     unmountOnExit={true}
                   >
-                    <MatchForm
-                      match={this.state.selectedUser!}
-                      mode={this.state.mode}
-                      onSubmit={this.handleSubmitMatch}
-                    />
+                    <div id="match-form-containter" className="center-contents">
+                      <MatchForm
+                        match={this.state.selectedUser!}
+                        mode={this.state.mode}
+                        onSubmit={this.handleSubmitMatch}
+                        onCancel={this.handleCancelMatch}
+                      />
+                    </div>
                   </CSSTransition>
                 </div>
               </div>
@@ -456,7 +464,11 @@ export class Connect extends React.Component<{}, IConnectState> {
     return alphaTopics;
   }
 
-  private handleClearMatches = (e: React.PointerEvent) => {
+  private handleCancelMatch = () => {
+    this.handleClearMatches();
+  };
+
+  private handleClearMatches = () => {
     this.setState({
       appState: "SEARCHING",
       learnMatches: undefined,
@@ -487,8 +499,8 @@ export class Connect extends React.Component<{}, IConnectState> {
     }
   };
 
-  private handleSubmitMatch = (noteText: string) => {
-    console.log(noteText);
+  private handleSubmitMatch = (response: IMatchFormResponse) => {
+    console.log(response);
   };
 
   private handleTopicSelection = (topic: string) => {
@@ -554,13 +566,11 @@ export class Connect extends React.Component<{}, IConnectState> {
       const user = users[0];
       const usernameClasses = classNames({
         username: true,
-        teach: this.state.mode === "TEACH",
-        learn: this.state.mode === "LEARN",
         selected: this.state.selectedUser === user
       });
       return (
         <div
-          className="match center-contents"
+          className={"match " + this.state.mode.toLowerCase()}
           onPointerUp={() => this.selectMatch(user)}
         >
           <span className="radio-dot center-contents">
@@ -572,9 +582,13 @@ export class Connect extends React.Component<{}, IConnectState> {
               }
             />
           </span>
-          <span className={usernameClasses}>{user.username}</span>
-          <span className="match-phrase">{matchPhrase}</span>
-          <Topic name={topic} editable={false} />
+          <div className="radio-label">
+            <span className={usernameClasses}>{user.username}</span>
+            <div className="match-phrase">
+              {matchPhrase}
+              <span>{topic}</span>
+            </div>
+          </div>
         </div>
       );
     });

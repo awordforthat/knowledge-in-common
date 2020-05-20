@@ -173,6 +173,12 @@
     }
   }
 
+  #match-form-container {
+    width: 50%;
+    max-width: 650px;
+    border: 1px solid black;
+  }
+
   #matches-container {
     margin: 20px;
     position: relative;
@@ -185,6 +191,7 @@
       top: -40px;
       z-index: 2;
       #matches-prompt-header {
+        text-align: center;
         font-size: 20px;
         margin-bottom: 10px;
       }
@@ -220,31 +227,21 @@
     .match {
       margin-top: 10px;
       justify-content: flex-start;
-      .username {
-        text-transform: uppercase;
-        font-weight: bold;
-        font-size: 20px;
-        margin-right: 10px;
-      }
-      .match-phrase {
-        margin-right: 10px;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      .radio-label {
+        position: relative;
+        top: 10px;
+
+        .match-phrase {
+          display: block;
+          margin-right: 10px;
+          width: fit-content;
+        }
       }
     }
 
-    .username.teach {
-      color: $teal;
-
-      &.selected {
-        border-bottom: 2px solid $teal;
-      }
-    }
-    .username.learn {
-      color: $orange;
-
-      &.selected {
-        border-bottom: 2px solid $orange;
-      }
-    }
   }
 
   @media (max-width: 470px) {
@@ -254,6 +251,16 @@
     #prompt {
       font-weight: bolder;
       font-size: 25px;
+    }
+  }
+
+  @media (min-width: 600px) {
+    .match {
+      .radio-label {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+      }
     }
   }
 
