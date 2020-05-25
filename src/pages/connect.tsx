@@ -17,6 +17,7 @@ import { ITopic } from "../api/iTopic";
 import { IMatch } from "../api/iMatch";
 import classNames from "classnames";
 import { MatchForm, IMatchFormResponse } from "../ui/matchForm";
+import { RouteComponentProps } from "react-router";
 
 interface IConnectState {
   appState: "EDITING" | "MATCHING" | "SEARCHING";
@@ -61,8 +62,11 @@ const letters = [
   "z"
 ];
 
-export class Connect extends React.Component<{}, IConnectState> {
-  constructor(props: {}) {
+export class Connect extends React.Component<
+  RouteComponentProps,
+  IConnectState
+> {
+  constructor(props: RouteComponentProps) {
     super(props);
     this.state = {
       appState: "SEARCHING",
@@ -500,7 +504,31 @@ export class Connect extends React.Component<{}, IConnectState> {
   };
 
   private handleSubmitMatch = (response: IMatchFormResponse) => {
-    console.log(response);
+    if (!this.state.selectedUser) {
+      console.log(
+        "You can't submit a match request without selecting a user first (actually not quite sure how you got here)"
+      );
+      return;
+    }
+    const messageObj = {
+      mode: this.state.mode,
+      requester: CurrentUser.getId(),
+      matchId: this.state.selectedUser!.id,
+      topic: this.state.selectedUser!.topic,
+      skillLevel: response.knowledgeLevel,
+      wantToKnow: response.background,
+      anythingElse: response.otherNotes
+    };
+    axios
+      .post(serverUrl + "/connect/request", messageObj)
+      .then(result => {
+        console.log("request complete");
+        this.props.history.replace("/complete");
+      })
+      .catch(err => {
+        //TODO: add toast message if request fails
+        console.log(err);
+      });
   };
 
   private handleTopicSelection = (topic: string) => {

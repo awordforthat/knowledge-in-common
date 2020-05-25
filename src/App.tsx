@@ -7,6 +7,8 @@ import "./index.css";
 import "./reset.css";
 import { About } from "./pages/about";
 import { Connect } from "./pages/connect";
+import { RequestComplete } from "./pages/requestComplete";
+import { Contact } from "./pages/contact";
 
 function App() {
   return (
@@ -14,8 +16,10 @@ function App() {
       <NavigationBar />
       <Route exact path="/" component={Home} />
       <Route exact path="/connect" component={Connect} />
+      <Route exact path="/complete" component={RequestComplete} />
       <Route exact path="/user/:userId" component={Account} />
       <Route exact path="/about" component={About} />
+      <Route exact path="/contact" component={Contact} />
     </div>
   );
 }
