@@ -43,6 +43,12 @@ $body-font: "Quicksand", sans-serif;
   );
 }
 
+.heading-flair {
+  border-style: solid;
+  border-width: 0px 0px 3px 0px;
+  border-radius: 0px 0px 5px 0px;
+}
+
 .cta {
   background: $orange;
   color: white;
@@ -64,6 +70,25 @@ $body-font: "Quicksand", sans-serif;
 
 .cta.cancel {
   background-color: rgba($dark-purple, 0.5) !important;
+}
+
+.button {
+  background: $tan;
+  color: $dark-purple;
+  width: 150px;
+  height: 45px;
+  border: none;
+  margin: 15px;
+  transition: transform 0.1s, opacity 0.1s;
+  transform-origin: center;
+}
+
+.button:active {
+  transform: scale(1.1);
+}
+
+.button.disabled {
+  opacity: 0.5;
 }
 
 .teach {
@@ -120,20 +145,3 @@ textarea {
   resize: none;
   border-radius: 3px;
 }
-// @media (min-width: 1024px) {
-//   * {
-//     font-size: 60px;
-//   }
-//   section {
-//     font-size: 60px;
-//   }
-// }
-
-// @media (min-width: 2048px) {
-//   * {
-//     font-size: 70px;
-//   }
-//   section {
-//     font-size: 70px;
-//   }
-// }

@@ -1,17 +1,17 @@
 import * as React from "react";
 import axios from "axios";
-
 import { RouteComponentProps } from "react-router";
 
 import { serverUrl } from "..";
 import { CurrentUser } from "../user";
-import "../css/global.css";
-import "../css/account.css";
 import { IUserData } from "../api/iUserData";
 import { Topic } from "../ui/topic";
 import { CSSTransition } from "react-transition-group";
 import { AlphaTopicList } from "../ui/alphaTopicList";
 import { ModeSwitcher } from "../ui/modeSwitcher";
+
+import "../css/global.css";
+import "../css/account.css";
 
 interface IAccountState {
   appState: "VIEW" | "EDIT";
@@ -91,47 +91,74 @@ export class Account extends React.Component<
           >
             <div>
               <div className="title">My Account</div>
-              <div>
-                Hi there
-                {this.state.userData && this.state.userData.username
-                  ? " " + this.state.userData.username
-                  : ""}
+              <div className="greeting">
+                Hi there,
+                <span className="username">
+                  {this.state.userData && this.state.userData.username
+                    ? " " + this.state.userData.username
+                    : ""}
+                </span>
                 !
               </div>
 
               <div id="profile-info">
-                <div id="edit-username">
-                  <label htmlFor="username-field">Edit your username:</label>
-                  <input
-                    value={this.state.enteredUsername}
-                    id="username-field"
-                    type="text"
-                    maxLength={32}
-                    pattern={"[a-z0-9]"}
-                    onInput={this.handleUsernameChange}
-                  />
-                  <button
-                    onClick={() => {
-                      this.updateUser({ username: this.state.enteredUsername });
-                    }}
-                  >
-                    Change
-                  </button>
+                <div className="section-title">
+                  About me
+                  <div className="heading-flair" />
                 </div>
-                <div>
-                  <div>What I know</div>
-                  <div>{this.renderTeachableTopics()}</div>
+                <div id="personal-info">
+                  <div id="edit-username">
+                    <label htmlFor="username-field">Username:</label>
+                    <input
+                      value={this.state.enteredUsername}
+                      id="username-field"
+                      type="text"
+                      maxLength={32}
+                      pattern={"[a-z0-9]"}
+                      onInput={this.handleUsernameChange}
+                    />
+                    <button
+                      className="button rounded"
+                      onClick={() => {
+                        this.updateUser({
+                          username: this.state.enteredUsername
+                        });
+                      }}
+                    >
+                      Change
+                    </button>
+                  </div>
+                  {this.state.userData && (
+                    <div>Email: {this.state.userData.email}</div>
+                  )}
                 </div>
-                <div>
-                  <div>What I want to know</div>
-                  <div>{this.renderLearnableTopics()}</div>
+
+                <div className="section-title">
+                  My Topics
+                  <div className="heading-flair" />
                 </div>
-                <button onClick={this.goToEditState}>Edit topics</button>
+                <div className="topic-section">
+                  <div className="topic-section-label">What I know</div>
+                  <div className="topics-container">
+                    {this.renderTeachableTopics()}
+                  </div>
+                </div>
+                <div className="topic-section">
+                  <div className="topic-section-label">What I want to know</div>
+                  <div className="topics-container">
+                    {this.renderLearnableTopics()}
+                  </div>
+                </div>
+                <button className="button rounded" onClick={this.goToEditState}>
+                  Edit topics
+                </button>
                 <div>
                   Stats: total requests made, total matches made, user since
                 </div>
               </div>
-              <button onClick={this.handleLogOut}>Log out</button>
+              <button className="button rounded" onClick={this.handleLogOut}>
+                Log out
+              </button>
             </div>
           </CSSTransition>
 

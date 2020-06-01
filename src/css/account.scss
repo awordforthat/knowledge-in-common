@@ -1,13 +1,76 @@
+@import "./global.scss";
 #account {
-  border: 3px solid gray;
   width: 100vw;
+  padding-left: 10%;
+
+  .title {
+    font-size: 40px;
+    height: fit-content;
+    margin-bottom: 20px;
+    margin-top: 40px;
+  }
+  .username {
+    color: $teal;
+    font-size: 20px;
+  }
+  .greeting {
+    margin-top: 40px;
+  }
+
+  .section-title {
+    position: relative;
+    width: fit-content;
+    font-size: 25px;
+    font-weight: bold;
+    margin-top: 40px;
+  }
+
+  .heading-flair {
+    color: $teal;
+    width: 100%;
+    position: relative;
+    left: -10%;
+    margin-top: 5px;
+  }
 
   #profile-info {
-    #edit-username {
-      border: 1px solid black;
+    width: 90%;
+    #personal-info {
+      padding-left: 10px;
+      #edit-username {
+        input {
+          padding-left: 5px;
+          margin-left: 10px;
+          border-radius: 2px;
+          border-style: solid;
+          border-width: 0px 0px 1px 0px;
+          border-color: $dark-purple;
+          width: 200px;
+          height: 2em;
+        }
+      }
+    }
+  }
 
-      input {
-        border: 1px solid black;
+  .topic-section {
+    width: 90%;
+    padding-left: 10px;
+    margin-top: 30px;
+
+    .topic-section-label {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .topics-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+
+      .topic {
+        margin: 10px;
+        width: 200px;
       }
     }
   }
