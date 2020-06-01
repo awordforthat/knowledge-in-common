@@ -58,6 +58,7 @@ export class MatchForm extends React.Component<
           <div className="response-container">
             <div className="text-field-container">
               <textarea
+                autoFocus={true}
                 id="text-q1"
                 maxLength={this.q1CharLimit}
                 value={this.state.q1text}
@@ -169,8 +170,7 @@ export class MatchForm extends React.Component<
 
   private setKnowledge = (level: "BEGINNER" | "INTERMEDIATE" | "ADVANCED") => {
     this.setState({
-      knowledgeLevel: level,
-      q3text: ""
+      knowledgeLevel: level
     });
   };
 

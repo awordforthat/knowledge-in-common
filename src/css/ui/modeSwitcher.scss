@@ -1,0 +1,30 @@
+#mode-switch {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  font-size: 20px;
+
+  #mode-prompt {
+    position: relative;
+    width: fit-content;
+  }
+  .switcher {
+    margin-left: 10px;
+    user-select: none;
+    position: relative;
+    top: 10px;
+    transition: top 0.2s;
+    width: fit-content;
+    &.bottom {
+      top: -10px;
+    }
+
+    .option {
+      transition: opacity 0.2s;
+      opacity: 1;
+      font-size: 20px;
+      &.deselected {
+        opacity: 0.3;
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+#account {
+  border: 3px solid gray;
+  width: 100vw;
+
+  #profile-info {
+    #edit-username {
+      border: 1px solid black;
+
+      input {
+        border: 1px solid black;
+      }
+    }
+  }
+}

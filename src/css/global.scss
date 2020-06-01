@@ -6,6 +6,7 @@ $teal: #368f8b;
 $cream: #f8ebcd;
 $tan: #e3d0b9;
 $orange: #c7620a;
+$red: #f1675d;
 
 $body-font: "Quicksand", sans-serif;
 
@@ -94,7 +95,6 @@ $body-font: "Quicksand", sans-serif;
 .username {
   text-transform: uppercase;
   font-weight: bold;
-  font-size: 20px;
   margin-right: 10px;
   margin-left: 10px;
   display: inline-block;
@@ -108,5 +108,32 @@ $body-font: "Quicksand", sans-serif;
 
 * {
   font-family: "Quicksand", sans-serif;
+
   color: $dark-purple;
 }
+
+div {
+  font-family: "Quicksand", sans-serif;
+}
+
+textarea {
+  resize: none;
+  border-radius: 3px;
+}
+// @media (min-width: 1024px) {
+//   * {
+//     font-size: 60px;
+//   }
+//   section {
+//     font-size: 60px;
+//   }
+// }
+
+// @media (min-width: 2048px) {
+//   * {
+//     font-size: 70px;
+//   }
+//   section {
+//     font-size: 70px;
+//   }
+// }

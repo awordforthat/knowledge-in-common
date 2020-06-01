@@ -14,32 +14,35 @@ class NavBar extends React.Component<RouteComponentProps, {}> {
           </div>
         </Link>
         <div className="button-bar">
+          <div className={this.getTabClasses("/about")}>
+            <Link to="/about">About</Link>
+          </div>
+          <div className={this.getTabClasses("/faq")}>
+            <Link to="/faq">FAQs</Link>
+          </div>
+          <div className={this.getTabClasses("/contact")}>
+            <Link to="/contact">Contact</Link>
+          </div>
           {window.localStorage["authToken"] !== "null" &&
           window.localStorage["authToken"] !== undefined ? (
             <React.Fragment>
-              <div className="tab">
+              <div className={this.getTabClasses("/connect")}>
                 <Link to="/connect">Connect</Link>
               </div>
-              <div className="tab">
+              <div className={this.getTabClasses("/account")}>
                 <Link to="/account">Account</Link>
-              </div>
-              <div className="tab" onClick={this.signOut}>
-                Log out
               </div>
             </React.Fragment>
           ) : (
             <div />
           )}
-
-          <div className="tab">
-            <Link to="/about">About</Link>
-          </div>
-          <div className="tab">
-            <Link to="/faq">FAQs</Link>
-          </div>
         </div>
       </div>
     );
+  }
+
+  private getTabClasses(route: string): string {
+    return this.props.location.pathname === route ? "tab selected" : "tab";
   }
 
   private signOut = () => {

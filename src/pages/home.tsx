@@ -58,6 +58,13 @@ export class Home extends React.Component<RouteComponentProps, IHomeState> {
               <button onClick={this.handleSignIn}>Log in</button>
             </div>
           )}
+          {CurrentUser.isLoggedIn() && (
+            <div className="button-container">
+              <button className="emphasis" onClick={this.goToConnect}>
+                Find matches
+              </button>
+            </div>
+          )}
         </section>
         <section id="About">
           <div className="section-title">About</div>
@@ -90,6 +97,10 @@ export class Home extends React.Component<RouteComponentProps, IHomeState> {
       </div>
     );
   }
+
+  private goToConnect = () => {
+    this.props.history.push("/connect");
+  };
 
   private handleLoginCancel = () => {
     this.setState({
@@ -124,7 +135,11 @@ export class Home extends React.Component<RouteComponentProps, IHomeState> {
 
   private renderTopics = () => {
     return this.state.topics.map(topic => {
-      return <Topic editable={false} name={topic} />;
+      return (
+        <div key={"homepage-topic-" + topic}>
+          <Topic editable={false} name={topic} />
+        </div>
+      );
     });
   };
 }

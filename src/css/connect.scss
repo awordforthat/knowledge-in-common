@@ -18,37 +18,6 @@
     margin-top: 20px;
   }
 
-  #mode-switch {
-    margin-top: 30px;
-    margin-bottom: 30px;
-    font-size: 20px;
-
-    #mode-prompt {
-      position: relative;
-      width: fit-content;
-    }
-    .switcher {
-      margin-left: 10px;
-      user-select: none;
-      position: relative;
-      top: 10px;
-      transition: top 0.2s;
-      width: fit-content;
-      &.bottom {
-        top: -10px;
-      }
-
-      .option {
-        transition: opacity 0.2s;
-        opacity: 1;
-        font-size: 20px;
-        &.deselected {
-          opacity: 0.3;
-        }
-      }
-    }
-  }
-
   #request-panel {
     position: relative;
     .request {
@@ -129,48 +98,6 @@
       height: 40px;
       width: 200px;
     }
-
-    .alpha-section {
-      display: flex;
-      flex-direction: column;
-      .topic-alpha-header {
-        width: 300px;
-        font-size: 50;
-        position: relative;
-        flex-direction: column;
-        font-size: 30px;
-        line-height: 40px;
-        margin-top: 20px;
-        margin-bottom: 10px;
-        .underline {
-          width: 400px;
-        }
-      }
-
-      .topics {
-        display: flex;
-        flex-wrap: wrap;
-        flex-direction: row;
-        width: 100%;
-        justify-content: center;
-        .bank-item {
-          .topic {
-            transition: border 0.2s;
-          }
-        }
-        .bank-item.selected-teach {
-          .topic {
-            border: 4px solid $teal;
-          }
-        }
-
-        .bank-item.selected-learn {
-          .topic {
-            border: 4px solid $orange;
-          }
-        }
-      }
-    }
   }
 
   #match-form-container {
@@ -241,7 +168,6 @@
         }
       }
     }
-
   }
 
   @media (max-width: 470px) {

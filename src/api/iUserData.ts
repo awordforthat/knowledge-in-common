@@ -2,7 +2,7 @@ import { ITopic } from "./iTopic";
 
 export interface IUserData {
   email: string;
-  userName?: string;
+  username?: string;
   learn?: string[];
   teach?: string[];
 }

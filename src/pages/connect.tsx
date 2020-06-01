@@ -18,6 +18,8 @@ import { IMatch } from "../api/iMatch";
 import classNames from "classnames";
 import { MatchForm, IMatchFormResponse } from "../ui/matchForm";
 import { RouteComponentProps } from "react-router";
+import { ModeSwitcher } from "../ui/modeSwitcher";
+import { AlphaTopicList } from "../ui/alphaTopicList";
 
 interface IConnectState {
   appState: "EDITING" | "MATCHING" | "SEARCHING";
@@ -30,37 +32,7 @@ interface IConnectState {
   selectedToTeach: string[];
   selectedUser?: IMatch;
   randomMatches?: number[];
-  allTopics?: any;
 }
-
-const letters = [
-  "a",
-  "b",
-  "c",
-  "d",
-  "e",
-  "f",
-  "g",
-  "h",
-  "i",
-  "j",
-  "k",
-  "l",
-  "m",
-  "n",
-  "o",
-  "p",
-  "q",
-  "r",
-  "s",
-  "t",
-  "u",
-  "v",
-  "w",
-  "x",
-  "y",
-  "z"
-];
 
 export class Connect extends React.Component<
   RouteComponentProps,
@@ -80,6 +52,9 @@ export class Connect extends React.Component<
 
   public componentWillMount() {
     // retrieve user
+    if (!CurrentUser.isLoggedIn()) {
+      return;
+    }
     axios
       .get(serverUrl + "/user", {
         headers: {
@@ -93,7 +68,7 @@ export class Connect extends React.Component<
         this.setState({
           canInteract: true,
           userData: {
-            userName: res.data.data.username,
+            username: res.data.data.username,
             email: res.data.data.email,
             learn: res.data.data.learn,
             teach: res.data.data.teach
@@ -109,32 +84,13 @@ export class Connect extends React.Component<
       .catch(err => {
         console.log(err);
       });
-
-    // retrieve topics
-    axios
-      .get(serverUrl + "/topic")
-      .then(res => {
-        let topics: ITopic[] = res.data.data;
-
-        this.setState({
-          allTopics: this.groupTopics(topics)
-        });
-      })
-      .catch(err => {
-        console.log(err);
-        console.log("Failed to get topics");
-      });
   }
 
   public render() {
     if (dataExists(window.localStorage["authToken"])) {
       return (
         <div id="connect">
-          {!this.state.userData && !this.state.allTopics ? (
-            <div>"Loading..."</div>
-          ) : (
-            <div />
-          )}
+          {!this.state.userData ? <div>"Loading..."</div> : <div />}
           <div id="greeting" className={"center-contents"}>
             hey there
             {window.localStorage["username"] !== "undefined" &&
@@ -165,40 +121,10 @@ export class Connect extends React.Component<
             timeout={5000}
             classNames="fade"
           >
-            <div id="mode-switch" className={"center-contents"}>
-              <div id="mode-prompt">
-                I want to
-                <span
-                  style={{ position: "absolute", right: "-80px", top: "-2px" }}
-                >
-                  :
-                </span>
-              </div>
-              <div
-                className={
-                  this.state.mode === "LEARN"
-                    ? "switcher top"
-                    : "switcher bottom"
-                }
-              >
-                <div
-                  onClick={this.toggleLearningMode}
-                  className={
-                    this.state.mode === "LEARN" ? "option" : "option deselected"
-                  }
-                >
-                  LEARN
-                </div>
-                <div
-                  onClick={this.toggleLearningMode}
-                  className={
-                    this.state.mode === "TEACH" ? "option" : "option deselected"
-                  }
-                >
-                  TEACH
-                </div>
-              </div>
-            </div>
+            <ModeSwitcher
+              onClick={this.toggleLearningMode}
+              mode={this.state.mode}
+            />
           </CSSTransition>
 
           <div id="request-panel">
@@ -294,10 +220,7 @@ export class Connect extends React.Component<
 
           <div id="customize-panel">
             <CSSTransition
-              in={
-                dataExists(this.state.allTopics) &&
-                this.state.appState === "EDITING"
-              }
+              in={this.state.appState === "EDITING"}
               classNames="fade"
               timeout={500}
               unmountOnExit={true}
@@ -313,26 +236,17 @@ export class Connect extends React.Component<
                   </button>{" "}
                   to search with these topics
                 </div>
-                <div>
-                  {this.state.allTopics &&
-                    this.state.appState === "EDITING" &&
-                    this.renderTopics()}
-                </div>
-                <div id="action-buttons">
-                  <div
-                    id="reset-button"
-                    className="action-button center-contents"
-                    onClick={this.handleReset}
-                  >
-                    <img src="./img/reset.png" width={50} />
-                  </div>
-                  <div
-                    id="search-button"
-                    className="action-button center-contents"
-                  >
-                    <img src="./img/search.png" width={50} />
-                  </div>
-                </div>
+
+                <AlphaTopicList
+                  mode={this.state.mode}
+                  onTopicClick={this.handleTopicSelection}
+                  onReset={this.handleReset}
+                  selectedTopics={
+                    this.state.mode === "TEACH"
+                      ? this.state.selectedToTeach
+                      : this.state.selectedToLearn
+                  }
+                />
               </React.Fragment>
             </CSSTransition>
           </div>
@@ -456,17 +370,6 @@ export class Connect extends React.Component<
         });
       });
   };
-
-  private groupTopics(topics: ITopic[]): ITopic[] {
-    // this method a good candidate for optimization
-    let alphaTopics: any = {};
-    letters.forEach(letter => {
-      alphaTopics[letter] = topics.filter(topic => {
-        return topic.name.substr(0, 1).toLowerCase() === letter;
-      });
-    });
-    return alphaTopics;
-  }
 
   private handleCancelMatch = () => {
     this.handleClearMatches();
@@ -600,6 +503,7 @@ export class Connect extends React.Component<
         <div
           className={"match " + this.state.mode.toLowerCase()}
           onPointerUp={() => this.selectMatch(user)}
+          key={"match-" + user.id.toString()}
         >
           <span className="radio-dot center-contents">
             <div
@@ -671,82 +575,6 @@ export class Connect extends React.Component<
     }
   };
 
-  private renderTopics = () => {
-    if (!this.state.userData) {
-      return <div>Please sign in again</div>;
-    }
-    if (this.state.allTopics === undefined) {
-      return <div>No topics found. Reload the page to try again.</div>;
-    }
-
-    let userTopics: string[] | undefined =
-      this.state.mode === "TEACH"
-        ? this.state.userData!.teach
-        : this.state.userData!.learn;
-
-    if (userTopics === undefined) {
-      userTopics = [];
-    }
-
-    const topicContents = Object.keys(this.state.allTopics).map(letter => {
-      if (!this.state.allTopics) {
-        return <div />;
-      }
-      const letterContents: ITopic[] = this.state.allTopics[letter].filter(
-        (topic: ITopic) => {
-          let inMode;
-          // future me: these are intentionally backwards.
-          // if the user wants to learn a topic, it has to be teachable;
-          // if they want to teach a topic, it has to be learnable
-          if (this.state.mode === "TEACH") {
-            inMode = topic.learnable;
-          } else if (this.state.mode === "LEARN") {
-            inMode = topic.teachable;
-          }
-          return topic.name.substr(0, 1) === letter && inMode;
-        }
-      );
-
-      return (
-        <div
-          className="alpha-section center-contents"
-          key={"alpha-section-" + letter}
-        >
-          <div className={"topic-alpha-header center-contents"}>
-            {letter}
-            <div className="underline" />
-          </div>
-          <div className="topics">
-            {letterContents.map((topic: ITopic, letterIndex: number) => {
-              const topicClasses = classnames({
-                "bank-item": true,
-                "selected-teach":
-                  this.state.mode === "TEACH" &&
-                  this.state.selectedToTeach.indexOf(topic.name) !== -1,
-                "selected-learn":
-                  this.state.mode === "LEARN" &&
-                  this.state.selectedToLearn.indexOf(topic.name) !== -1
-              });
-              return (
-                <div
-                  key={"topic-" + letter + "-" + letterIndex}
-                  className={topicClasses}
-                >
-                  <Topic
-                    name={topic.name}
-                    editable={true}
-                    onClick={this.handleTopicSelection}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      );
-    });
-
-    return <div className="topic-bank center-contents">{topicContents}</div>;
-  };
   private selectMatch = (match: IMatch) => {
     this.setState({
       selectedUser: match

@@ -1,0 +1,43 @@
+@import "../global.scss";
+.alpha-section {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  .topic-alpha-header {
+    width: 300px;
+    font-size: 50;
+    position: relative;
+    flex-direction: column;
+    font-size: 30px;
+    line-height: 40px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    .underline {
+      width: 400px;
+    }
+  }
+
+  .topics {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    .bank-item {
+      .topic {
+        transition: border 0.2s;
+      }
+    }
+    .bank-item.selected-teach {
+      .topic {
+        border: 4px solid $teal;
+      }
+    }
+
+    .bank-item.selected-learn {
+      .topic {
+        border: 4px solid $orange;
+      }
+    }
+  }
+}

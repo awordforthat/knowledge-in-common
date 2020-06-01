@@ -104,6 +104,7 @@ class Login extends React.Component<ILoginProps, ILoginState> {
               <div className="input-field">
                 <label htmlFor="email-input">Email:</label>
                 <input
+                  autoFocus={true}
                   type="text"
                   name="email-input"
                   pattern='@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,})+)$""'

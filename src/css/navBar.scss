@@ -58,6 +58,10 @@
       justify-content: center;
       align-items: center;
       width: 15vw;
+
+      &.selected {
+        border-bottom: 2px solid $dark-purple;
+      }
     }
   }
 }
