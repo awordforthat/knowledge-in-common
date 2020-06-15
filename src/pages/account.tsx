@@ -64,7 +64,8 @@ export class Account extends React.Component<
                 username: res.data.data.username,
                 email: res.data.data.email,
                 learn: res.data.data.learn,
-                teach: res.data.data.teach
+                teach: res.data.data.teach,
+                pending: res.data.data.pending
               },
               selectedToTeach: res.data.data.teach,
               selectedToLearn: res.data.data.learn
@@ -75,6 +76,22 @@ export class Account extends React.Component<
           })
           .finally(() => {
             this.setState({ canInteract: true });
+          });
+
+        axios
+          .get(serverUrl + "/user/" + CurrentUser.getId() + "/pending", {
+            headers: {
+              authorization: "bearer " + CurrentUser.getToken()
+            }
+          })
+          .then(result => {
+            console.log(result);
+            result.data.forEach((item: any) => {
+              console.log(item);
+            });
+          })
+          .catch(err => {
+            console.log(err);
           });
       }
     );
@@ -138,6 +155,12 @@ export class Account extends React.Component<
                   <div className="heading-flair" />
                 </div>
                 <div className="topic-section">
+                  <button
+                    className="button rounded"
+                    onClick={this.goToEditState}
+                  >
+                    Edit topics
+                  </button>
                   <div className="topic-section-label">What I know</div>
                   <div className="topics-container">
                     {this.renderTeachableTopics()}
@@ -149,9 +172,14 @@ export class Account extends React.Component<
                     {this.renderLearnableTopics()}
                   </div>
                 </div>
-                <button className="button rounded" onClick={this.goToEditState}>
-                  Edit topics
-                </button>
+
+                <div className="section-title">
+                  Pending Matches
+                  <div className="heading-flair" />
+                </div>
+                <div className="topic-section">
+                  {this.renderPendingMatches()}
+                </div>
                 <div>
                   Stats: total requests made, total matches made, user since
                 </div>
@@ -265,6 +293,10 @@ export class Account extends React.Component<
         editMode: prevState.editMode === "TEACH" ? "LEARN" : "TEACH"
       };
     });
+  };
+
+  private renderPendingMatches = () => {
+    return <div>Pending matches go here</div>;
   };
 
   private updateUser = (data: any) => {

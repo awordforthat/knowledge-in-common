@@ -1,6 +1,6 @@
 import * as React from "react";
 import axios from "axios";
-import classnames from "classnames";
+import { Toaster, Position } from "@blueprintjs/core";
 
 import { CSSTransition } from "react-transition-group";
 
@@ -13,17 +13,20 @@ import { IUserData } from "../api/iUserData";
 import "../css/transitions.css";
 import "../css/connect.css";
 import { Topic } from "../ui/topic";
-import { ITopic } from "../api/iTopic";
-import { IMatch } from "../api/iMatch";
+import { IMatch, IPendingMatch } from "../api/iMatch";
 import classNames from "classnames";
 import { MatchForm, IMatchFormResponse } from "../ui/matchForm";
 import { RouteComponentProps } from "react-router";
 import { ModeSwitcher } from "../ui/modeSwitcher";
 import { AlphaTopicList } from "../ui/alphaTopicList";
+import { match } from "minimatch";
+import { reject } from "q";
+import { rejects } from "assert";
 
 interface IConnectState {
   appState: "EDITING" | "MATCHING" | "SEARCHING";
   canInteract: boolean;
+  errorText: string;
   learnMatches?: IMatch[];
   teachMatches?: IMatch[];
   mode: "LEARN" | "TEACH";
@@ -38,16 +41,19 @@ export class Connect extends React.Component<
   RouteComponentProps,
   IConnectState
 > {
+  private toaster: React.RefObject<Toaster>;
   constructor(props: RouteComponentProps) {
     super(props);
     this.state = {
       appState: "SEARCHING",
+      errorText: "",
       canInteract: false,
       mode: "LEARN",
       selectedToLearn: [],
       selectedToTeach: []
     };
     CurrentUser.emitter.addListener("logout", this.reset);
+    this.toaster = React.createRef<Toaster>();
   }
 
   public componentWillMount() {
@@ -71,7 +77,8 @@ export class Connect extends React.Component<
             username: res.data.data.username,
             email: res.data.data.email,
             learn: res.data.data.learn,
-            teach: res.data.data.teach
+            teach: res.data.data.teach,
+            pending: res.data.data.pending
           },
           selectedToLearn: res.data.data.learn
             ? JSON.parse(JSON.stringify(res.data.data.learn))
@@ -86,10 +93,19 @@ export class Connect extends React.Component<
       });
   }
 
+  public componentDidMount() {
+    if (this.toaster.current) {
+      // this.toaster.current.create
+
+      this.toaster.current.show({ message: "hello world!" });
+    }
+  }
+
   public render() {
     if (dataExists(window.localStorage["authToken"])) {
       return (
         <div id="connect">
+          <Toaster ref={this.toaster} position={Position.TOP} />
           {!this.state.userData ? <div>"Loading..."</div> : <div />}
           <div id="greeting" className={"center-contents"}>
             hey there
@@ -265,6 +281,7 @@ export class Connect extends React.Component<
   public reset = () => {
     this.setState({
       appState: "SEARCHING",
+      errorText: "",
       mode: "LEARN",
       selectedToLearn: [],
       selectedToTeach: []
@@ -278,16 +295,33 @@ export class Connect extends React.Component<
     this.setState({
       canInteract: false
     });
-
+    /**
+ * {
+        data: {
+          mode: this.state.mode.toLowerCase(),
+          id: CurrentUser.getId(),
+          topics:
+            this.state.mode === "LEARN"
+              ? this.state.selectedToLearn
+              : this.state.selectedToTeach
+        }
+      }
+ */
     axios
-      .post(serverUrl + "/connect", {
-        mode: this.state.mode.toLowerCase(),
-        id: CurrentUser.getId(),
-        topics:
-          this.state.mode === "LEARN"
-            ? this.state.selectedToLearn
-            : this.state.selectedToTeach
-      })
+      .post(
+        serverUrl + "/connect",
+        {
+          mode: this.state.mode.toLowerCase(),
+          id: CurrentUser.getId(),
+          topics:
+            this.state.mode === "LEARN"
+              ? this.state.selectedToLearn
+              : this.state.selectedToTeach
+        },
+        {
+          headers: { authorization: "bearer " + CurrentUser.getToken() }
+        }
+      )
       .then(result => {
         interface IMultiMatch {
           id: string;
@@ -295,7 +329,7 @@ export class Connect extends React.Component<
           username: string;
         }
         const parsedMatches: IMultiMatch[] = [];
-        result.data.users.forEach((obj: any) => {
+        result.data.forEach((obj: any) => {
           if (
             dataExists(obj.id) &&
             dataExists(obj.username) &&
@@ -320,7 +354,7 @@ export class Connect extends React.Component<
                 topicMatches[Math.floor(Math.random() * topicMatches.length)];
 
               matches.push({
-                id: randomTeacher.id,
+                userId: randomTeacher.id,
                 username: randomTeacher.username,
                 topic: topic
               });
@@ -337,7 +371,7 @@ export class Connect extends React.Component<
                 learnMatches[Math.floor(Math.random() * learnMatches.length)];
 
               matches.push({
-                id: randomLearner.id,
+                userId: randomLearner.id,
                 username: randomLearner.username,
                 topic: topic
               });
@@ -416,21 +450,25 @@ export class Connect extends React.Component<
     const messageObj = {
       mode: this.state.mode,
       requester: CurrentUser.getId(),
-      matchId: this.state.selectedUser!.id,
+      matchId: this.state.selectedUser!.userId,
       topic: this.state.selectedUser!.topic,
       skillLevel: response.knowledgeLevel,
       wantToKnow: response.background,
       anythingElse: response.otherNotes
     };
     axios
-      .post(serverUrl + "/connect/request", messageObj)
+      .post(serverUrl + "/connect/request", messageObj, {
+        headers: {
+          authorization: "bearer " + CurrentUser.getToken()
+        }
+      })
       .then(result => {
-        console.log("request complete");
         this.props.history.replace("/complete");
       })
       .catch(err => {
         //TODO: add toast message if request fails
         console.log(err);
+        console.log(err.message);
       });
   };
 
@@ -464,6 +502,9 @@ export class Connect extends React.Component<
   };
 
   private renderMatches = () => {
+    if (!this.state.userData) {
+      return <div />;
+    }
     if (this.state.mode === "TEACH" && !dataExists(this.state.teachMatches)) {
       return <div />;
     }
@@ -476,6 +517,7 @@ export class Connect extends React.Component<
     let topicArray: string[];
     let matchPhrase: string;
     let matchesArray: IMatch[];
+    let pendingMatches: IPendingMatch[] = this.state.userData.pending;
     if (this.state.mode === "LEARN") {
       topicArray = this.state.selectedToLearn;
       matchPhrase = " can teach you ";
@@ -487,14 +529,52 @@ export class Connect extends React.Component<
     }
 
     matches = topicArray.map(topic => {
-      // find the user in matches that is associated with this topic
-      const users = matchesArray.filter(match => {
+      // find the users in matches that are associated with this topic
+      let users = matchesArray.filter(match => {
         return match.topic === topic;
       });
       if (users.length === 0) {
-        return <div>No matches found for {topic}</div>;
+        return (
+          <div key={"topic-match-" + topic + "-not-found"}>
+            No matches found for {topic}.
+          </div>
+        );
       }
-      const user = users[0];
+
+      users = users.filter((matchingUser, index) => {
+        let matchingPending = [];
+        if (this.state.mode == "LEARN") {
+          // look for existing matches where topic and teacher are the same
+          matchingPending = pendingMatches.filter(pendingMatch => {
+            return (
+              pendingMatch.teacher === matchingUser.userId &&
+              pendingMatch.topic === matchingUser.topic
+            );
+          });
+        } else {
+          matchingPending = pendingMatches.filter(pendingMatch => {
+            return (
+              pendingMatch.learner === matchingUser.userId &&
+              pendingMatch.topic === matchingUser.topic
+            );
+          });
+        }
+        return matchingPending.length === 0;
+      });
+
+      if (users.length === 0) {
+        return (
+          <div key={"topic-match-" + topic + "-not-found"}>
+            You have pending matches with all of the available{" "}
+            {this.state.mode === "TEACH" ? "learners" : "teachers"} for {topic}.
+          </div>
+        );
+      }
+
+      // if there are valid matches left, choose a random user among them
+
+      let user = users[Math.floor(Math.random() * users.length)];
+
       const usernameClasses = classNames({
         username: true,
         selected: this.state.selectedUser === user
@@ -503,7 +583,7 @@ export class Connect extends React.Component<
         <div
           className={"match " + this.state.mode.toLowerCase()}
           onPointerUp={() => this.selectMatch(user)}
-          key={"match-" + user.id.toString()}
+          key={"match-" + user.userId.toString()}
         >
           <span className="radio-dot center-contents">
             <div
