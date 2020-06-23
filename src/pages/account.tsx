@@ -40,7 +40,7 @@ export class Account extends React.Component<
     };
   }
 
-  public componentWillMount() {
+  public componentDidMount() {
     this.setState(
       {
         canInteract: false
@@ -57,9 +57,7 @@ export class Account extends React.Component<
           })
           .then(res => {
             this.setState({
-              enteredUsername: res.data.data.username
-                ? res.data.data.username
-                : "",
+              enteredUsername: res.data.data.username,
               userData: {
                 username: res.data.data.username,
                 email: res.data.data.email,
@@ -76,22 +74,6 @@ export class Account extends React.Component<
           })
           .finally(() => {
             this.setState({ canInteract: true });
-          });
-
-        axios
-          .get(serverUrl + "/user/" + CurrentUser.getId() + "/pending", {
-            headers: {
-              authorization: "bearer " + CurrentUser.getToken()
-            }
-          })
-          .then(result => {
-            console.log(result);
-            result.data.forEach((item: any) => {
-              console.log(item);
-            });
-          })
-          .catch(err => {
-            console.log(err);
           });
       }
     );
@@ -130,12 +112,17 @@ export class Account extends React.Component<
                       value={this.state.enteredUsername}
                       id="username-field"
                       type="text"
+                      minLength={1}
                       maxLength={32}
                       pattern={"[a-z0-9]"}
                       onInput={this.handleUsernameChange}
                     />
                     <button
-                      className="button rounded"
+                      className={
+                        this.state.enteredUsername.length > 0
+                          ? "button rounded"
+                          : "button rounded disabled"
+                      }
                       onClick={() => {
                         this.updateUser({
                           username: this.state.enteredUsername
@@ -296,6 +283,32 @@ export class Account extends React.Component<
   };
 
   private renderPendingMatches = () => {
+    if (!this.state.userData) {
+      return <div />;
+    }
+    if (this.state.userData.pending.length == 0) {
+      return <div>You have no pending matches.</div>;
+    } else {
+      return (
+        <ul id="pending-matches-container">
+          {this.state.userData.pending.map((pendingMatch, index) => {
+            return (
+              <li key={"pending-match-" + pendingMatch.topic + "-" + index}>
+                {CurrentUser.getId() === pendingMatch.learner
+                  ? "Learn " +
+                    pendingMatch.topic +
+                    " from " +
+                    pendingMatch.teacherName
+                  : "Teach " +
+                    pendingMatch.topic +
+                    " to " +
+                    pendingMatch.learnerName}
+              </li>
+            );
+          })}
+        </ul>
+      );
+    }
     return <div>Pending matches go here</div>;
   };
 

@@ -111,6 +111,7 @@ class Login extends React.Component<ILoginProps, ILoginState> {
                   onChange={this.handleEmailUpdate}
                 />
               </div>
+
               <div className="input-field">
                 <label htmlFor="password-input">Password:</label>
                 <input
