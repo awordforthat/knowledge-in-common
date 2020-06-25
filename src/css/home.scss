@@ -27,7 +27,7 @@
       position: absolute;
       justify-content: center;
       align-items: center;
-      bottom: 30px;
+      bottom: 15%;
       button {
         background: $teal;
         color: white;
@@ -38,6 +38,7 @@
         height: 4vh;
         border: none;
         margin: 10px;
+
         &.emphasis {
           width: 25vw;
           height: 6vh;
@@ -49,5 +50,35 @@
         box-shadow: 0px 4px 5px 5px rgba(black, 0.2);
       }
     }
+  }
+}
+
+@media (min-width: 350px) {
+  #hero-text {
+    font-size: 30px;
+  }
+
+  button {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 767px) {
+  #hero-text {
+    font-size: 60px;
+  }
+
+  button {
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 1440px) {
+  #hero-text {
+    font-size: 200px;
+  }
+
+  button {
+    font-size: 80px;
   }
 }

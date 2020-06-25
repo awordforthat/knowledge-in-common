@@ -72,21 +72,17 @@ $body-font: "Quicksand", sans-serif;
   background-color: rgba($dark-purple, 0.5) !important;
 }
 
-.button {
-  background: $tan;
-  color: $dark-purple;
-  width: 150px;
-  height: 45px;
-  border: none;
-  margin: 15px;
-  transition: transform 0.1s, opacity 0.1s;
-  transform-origin: center;
-}
-
 .button:active {
   transform: scale(1.1);
 }
 
+.button {
+  background: $tan;
+  color: $dark-purple;
+  transition: transform 0.1s, opacity 0.1s;
+  transform-origin: center;
+  border: none;
+}
 .button.disabled {
   opacity: 0.5;
 }
@@ -139,9 +135,30 @@ $body-font: "Quicksand", sans-serif;
 
 div {
   font-family: "Quicksand", sans-serif;
+  font-size: 16px;
 }
 
 textarea {
   resize: none;
   border-radius: 3px;
+}
+
+@media (min-width: 350px) {
+  .button {
+    width: 150px;
+    height: 45px;
+    margin: 15px;
+  }
+}
+
+@media (min-width: 1440px) {
+  div {
+    font-size: 80px;
+  }
+
+  .button {
+    width: 500px;
+    height: 150px;
+    border-radius: 10px;
+  }
 }
