@@ -2,9 +2,7 @@ import { EventEmitter } from "events";
 
 export class CurrentUser {
   public static emitter: EventEmitter = new EventEmitter();
-  public constructor() {
-    console.log(CurrentUser.emitter);
-  }
+
   public static getId(): string {
     return window.localStorage["id"];
   }
@@ -19,6 +17,14 @@ export class CurrentUser {
 
   public static getToken(): string {
     return window.localStorage["authToken"];
+  }
+
+  public static setUsername(username: string) {
+    window.localStorage["username"] = username;
+  }
+
+  public static setEmail(email: string) {
+    window.localStorage["email"] = email;
   }
 
   public static signIn(

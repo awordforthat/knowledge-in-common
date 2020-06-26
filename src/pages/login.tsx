@@ -152,6 +152,7 @@ class Login extends React.Component<ILoginProps, ILoginState> {
                     type="text"
                     name="username-input"
                     placeholder={"This name will be shown to your matches"}
+                    value={this.state.userName}
                     onChange={this.handleUsernameChange}
                   />
                 </div>
@@ -181,7 +182,7 @@ class Login extends React.Component<ILoginProps, ILoginState> {
     );
   }
 
-  private evaluateCanSubmit = () => [
+  private evaluateCanSubmit = () => {
     this.setState(prevState => {
       let submit = false;
       if (prevState.submitting) {
@@ -199,8 +200,8 @@ class Login extends React.Component<ILoginProps, ILoginState> {
       return {
         canSubmit: submit
       };
-    })
-  ];
+    });
+  };
 
   private handleCancel = () => {
     if (this.state.submitting) {
@@ -369,7 +370,7 @@ class Login extends React.Component<ILoginProps, ILoginState> {
   private handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     this.setState(
       {
-        userName: e.currentTarget.value
+        userName: e.currentTarget.value.trim().replace(/[^a-z0-9]/gi, "")
       },
       this.evaluateCanSubmit
     );

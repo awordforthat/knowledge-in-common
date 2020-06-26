@@ -325,6 +325,8 @@ export class Account extends React.Component<
           }
         )
         .then(response => {
+          CurrentUser.setUsername(response.data.username);
+          CurrentUser.setEmail(response.data.email);
           this.setState({
             userData: response.data
           });
