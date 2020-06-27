@@ -1,6 +1,5 @@
 import * as React from "react";
 import axios from "axios";
-import { Toaster, Position } from "@blueprintjs/core";
 
 import { CSSTransition } from "react-transition-group";
 
@@ -19,9 +18,7 @@ import { MatchForm, IMatchFormResponse } from "../ui/matchForm";
 import { RouteComponentProps } from "react-router";
 import { ModeSwitcher } from "../ui/modeSwitcher";
 import { AlphaTopicList } from "../ui/alphaTopicList";
-import { match } from "minimatch";
-import { reject } from "q";
-import { rejects } from "assert";
+
 
 interface IConnectState {
   appState: "EDITING" | "MATCHING" | "SEARCHING";
@@ -41,7 +38,6 @@ export class Connect extends React.Component<
   RouteComponentProps,
   IConnectState
 > {
-  private toaster: React.RefObject<Toaster>;
   constructor(props: RouteComponentProps) {
     super(props);
     this.state = {
@@ -53,7 +49,7 @@ export class Connect extends React.Component<
       selectedToTeach: []
     };
     CurrentUser.emitter.addListener("logout", this.reset);
-    this.toaster = React.createRef<Toaster>();
+    
   }
 
   public componentWillMount() {
@@ -93,19 +89,13 @@ export class Connect extends React.Component<
       });
   }
 
-  public componentDidMount() {
-    if (this.toaster.current) {
-      // this.toaster.current.create
-
-      this.toaster.current.show({ message: "hello world!" });
-    }
-  }
+ 
 
   public render() {
     if (dataExists(window.localStorage["authToken"])) {
       return (
         <div id="connect">
-          <Toaster ref={this.toaster} position={Position.TOP} />
+         
           {!this.state.userData ? <div>"Loading..."</div> : <div />}
           <div id="greeting" className={"center-contents"}>
             hey there

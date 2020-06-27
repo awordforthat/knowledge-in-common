@@ -9,6 +9,7 @@ import { About } from "./pages/about";
 import { Connect } from "./pages/connect";
 import { RequestComplete } from "./pages/requestComplete";
 import { Contact } from "./pages/contact";
+import { Footer } from "./ui/footer";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <Route exact path="/account" component={Account} />
       <Route exact path="/about" component={About} />
       <Route exact path="/contact" component={Contact} />
+      <Footer/>
     </div>
   );
 }

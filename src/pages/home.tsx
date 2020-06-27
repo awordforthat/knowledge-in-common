@@ -9,6 +9,7 @@ import "../css/global.css";
 import "../css/transitions.css";
 import { Topic } from "../ui/topic";
 import { CurrentUser } from "../user";
+import { serverUrl } from "..";
 
 interface IHomeState {
   topics: string[];
@@ -28,7 +29,7 @@ export class Home extends React.Component<RouteComponentProps, IHomeState> {
 
   componentDidMount() {
     axios
-      .get("http://localhost:8081/topic")
+      .get(serverUrl + "/topic")
       .then(result => {
         let topics: string[] = [];
         result.data.data.forEach((topicObj: any) => {
@@ -68,15 +69,7 @@ export class Home extends React.Component<RouteComponentProps, IHomeState> {
         </section>
         <section id="About">
           <div className="section-title">About</div>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eu felis
-          rhoncus, suscipit odio eu, aliquet justo. Nulla eget hendrerit magna.
-          Nulla sollicitudin turpis in odio tincidunt, sed cursus dui aliquet.
-          Ut ex est, maximus in massa nec, scelerisque condimentum turpis. Nunc
-          quam magna, commodo eget neque eget, volutpat maximus velit. Integer
-          interdum vestibulum vulputate. Ut id orci sollicitudin, sollicitudin
-          ex eget, ultrices dui. Vestibulum consequat, erat non fermentum
-          accumsan, eros leo fringilla odio, ut vehicula urna erat commodo
-          libero. Aliquam eu interdum leo.
+          This is some new text
         </section>
         <section>
           <div className="section-title">Explore</div>
