@@ -2,22 +2,22 @@ import * as React from "react";
 import axios from "axios";
 
 import { CSSTransition } from "react-transition-group";
+import classNames from "classnames";
 
 import { dataExists } from "../helpers";
 import { Footer } from "../ui/footer";
 import { serverUrl } from "..";
 import { CurrentUser } from "../user";
 import { IUserData } from "../api/iUserData";
-
-import "../css/transitions.css";
-import "../css/connect.css";
 import { Topic } from "../ui/topic";
 import { IMatch, IPendingMatch } from "../api/iMatch";
-import classNames from "classnames";
 import { MatchForm, IMatchFormResponse } from "../ui/matchForm";
 import { RouteComponentProps } from "react-router";
 import { ModeSwitcher } from "../ui/modeSwitcher";
 import { AlphaTopicList } from "../ui/alphaTopicList";
+
+import "../css/transitions.css";
+import "../css/connect.css";
 
 
 interface IConnectState {

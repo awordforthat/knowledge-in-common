@@ -181,7 +181,6 @@ class Login extends React.Component<ILoginProps, ILoginState> {
       </div>
     );
   }
-  // this is a test change
 
   private evaluateCanSubmit = () => {
     this.setState(prevState => {

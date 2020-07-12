@@ -17,8 +17,8 @@ class NavBar extends React.Component<RouteComponentProps, {}> {
           <div className={this.getTabClasses("/about")}>
             <Link to="/about">About</Link>
           </div>
-          <div className={this.getTabClasses("/faq")}>
-            <Link to="/faq">FAQs</Link>
+          <div className={this.getTabClasses("/faqs")}>
+            <Link to="/faqs">FAQs</Link>
           </div>
           <div className={this.getTabClasses("/contact")}>
             <Link to="/contact">Contact</Link>

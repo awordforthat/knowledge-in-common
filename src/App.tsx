@@ -1,15 +1,18 @@
 import React from "react";
 import { Route } from "react-router-dom";
+
 import { Home } from "./pages/home";
-import { Account } from "./pages/account";
-import { NavigationBar } from "./ui/navBar";
-import "./index.css";
-import "./reset.css";
 import { About } from "./pages/about";
 import { Connect } from "./pages/connect";
+import { Account } from "./pages/account";
 import { RequestComplete } from "./pages/requestComplete";
+import { Faqs } from "./pages/faqs";
 import { Contact } from "./pages/contact";
 import { Footer } from "./ui/footer";
+import { NavigationBar } from "./ui/navBar";
+
+import "./index.css";
+import "./reset.css";
 
 function App() {
   return (
@@ -19,9 +22,10 @@ function App() {
       <Route exact path="/connect" component={Connect} />
       <Route exact path="/complete" component={RequestComplete} />
       <Route exact path="/account" component={Account} />
+      <Route exact path="/faqs" component={Faqs} />
       <Route exact path="/about" component={About} />
       <Route exact path="/contact" component={Contact} />
-      <Footer/>
+      <Footer />
     </div>
   );
 }

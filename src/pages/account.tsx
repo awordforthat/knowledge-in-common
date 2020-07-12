@@ -309,7 +309,6 @@ export class Account extends React.Component<
         </ul>
       );
     }
-    return <div>Pending matches go here</div>;
   };
 
   private updateUser = (data: any) => {
