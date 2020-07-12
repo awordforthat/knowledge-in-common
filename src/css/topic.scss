@@ -3,13 +3,19 @@
 .topic-container {
   position: relative;
 
-  .topic-item {
-    border: 1px solid black;
-    padding: 10px;
-    max-width: 200px;
-  }
   .topic {
-    background: white;
+    background: conic-gradient(
+      at bottom left,
+      $cream 2%,
+      $cream 3%,
+      $teal 4%,
+      $teal 5%,
+      $dark-teal 6%,
+      $dark-teal 7%,
+      $orange 8%,
+      $orange 9%,
+      transparent 10%
+    );
     transition: background-color 0.3s;
   }
   .remove-topic-dialog {
@@ -38,16 +44,61 @@
 
 .topic-bank {
   position: absolute;
-  top: 0px;
-  margin-top: 20px;
-  flex-direction: column;  
+
+  flex-direction: column;
   position: relative;
   flex-wrap: wrap;
 
   .topic {
     box-sizing: border-box;
-    margin: 10px;
-    height: 40px;
+  }
+}
+
+@media (min-width: 350px) {
+  .topic-item {
+    padding: 10px;
     width: 200px;
+  }
+
+  .topic-bank {
+    margin-top: 20px;
+    top: 0px;
+    .topic {
+      margin: 10px;
+      height: 40px;
+      width: 200px;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .topic-item {
+    padding: 10px;
+    width: 200px;
+  }
+  .topic-bank {
+    margin-top: 20px;
+    top: 0px;
+    .topic {
+      margin: 10px;
+      height: 40px;
+      width: 200px;
+    }
+  }
+}
+
+@media (min-width: 1440px) {
+  .topic-item {
+    padding: 80px;
+    width: 500px;
+  }
+  .topic-bank {
+    margin-top: 20px;
+    top: 0px;
+    .topic {
+      margin: 10px;
+      height: 40px;
+      width: 700px;
+    }
   }
 }

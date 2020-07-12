@@ -61,7 +61,7 @@ export class Home extends React.Component<RouteComponentProps, IHomeState> {
           )}
           {CurrentUser.isLoggedIn() && (
             <div className="button-container">
-              <button className="emphasis" onClick={this.goToConnect}>
+              <button className="cta" onClick={this.goToConnect}>
                 Find matches
               </button>
             </div>

@@ -2,11 +2,6 @@
   background-color: white;
   width: 100vw;
   height: 100vh; }
-  .main .title {
-    font-size: 8vw;
-    height: 30vh; }
-  .main #subtitle {
-    font-size: 4vw; }
 
 .center-contents {
   display: flex;

@@ -1,30 +1,63 @@
 #mode-switch {
-  margin-top: 30px;
-  margin-bottom: 30px;
-  font-size: 20px;
-
   #mode-prompt {
     position: relative;
     width: fit-content;
   }
   .switcher {
-    margin-left: 10px;
     user-select: none;
     position: relative;
-    top: 10px;
     transition: top 0.2s;
     width: fit-content;
-    &.bottom {
-      top: -10px;
-    }
 
     .option {
       transition: opacity 0.2s;
       opacity: 1;
-      font-size: 20px;
       &.deselected {
         opacity: 0.3;
       }
+    }
+  }
+}
+
+@media (min-width: 350px) {
+  #mode-switch {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+  .switcher {
+    margin-left: 10px;
+    top: 10px;
+    &.bottom {
+      top: -10px;
+    }
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1440px) {
+  #mode-switch {
+    margin-top: 50px;
+    margin-bottom: 20px;
+  }
+  .switcher {
+    margin-left: 10px;
+    top: 10px;
+
+    &.bottom {
+      top: -10px;
+    }
+  }
+}
+
+@media (min-width: 1440px) {
+  #mode-switch {
+    margin-top: 80px;
+    margin-bottom: 100px;
+  }
+  .switcher {
+    margin-left: 50px;
+    top: 50px;
+    &.bottom {
+      top: -40px;
     }
   }
 }
