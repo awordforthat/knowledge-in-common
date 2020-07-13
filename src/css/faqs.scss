@@ -10,6 +10,16 @@
     font-size: 2em;
     margin-top: 5vh;
     margin-left: 10%;
+    margin-bottom: 1em;
+  }
+  .underline-container {
+    width: 100%;
+    position: relative;
+
+    .underline {
+      margin-bottom: 2em;
+      width: 80%;
+    }
   }
 
   #question-bank {
@@ -69,11 +79,19 @@
           height: 0px;
           overflow: hidden;
         }
-
-        .answer.expanded {
-          height: 200px;
-        }
       }
+    }
+  }
+
+  #confused-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    a {
+      margin: 0.5em;
+      font-size: 1.1em;
+      line-height: 1.5em;
     }
   }
 }

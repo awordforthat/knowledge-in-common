@@ -87,9 +87,12 @@ export class Faqs extends React.Component<{}, IFaqState> {
     return (
       <div id="faqs">
         <h1 className="header">Frequently Asked Questions</h1>
+        <div className="underline-container center-contents">
+          <div className="underline" />
+        </div>
         <div id="question-bank">{this.renderQuestions()}</div>
-        <div id="link">
-          Still confused? <Link to="/contact">Send us a note</Link> and we'll
+        <div id="confused-container">
+          Still confused? <Link to="/contact"> Send us a note </Link> and we'll
           try to help!
         </div>
       </div>
@@ -111,7 +114,10 @@ export class Faqs extends React.Component<{}, IFaqState> {
                 <div className={expanded ? "arrow down" : "arrow right"} />
                 <div className="question">{question.qaPair.question}</div>
               </div>
-              <div className={expanded ? "answer expanded" : "answer"}>
+              <div
+                id={"answer-" + question.id}
+                className={expanded ? "answer expanded" : "answer"}
+              >
                 {question.qaPair.answer}
               </div>
             </li>
@@ -121,6 +127,37 @@ export class Faqs extends React.Component<{}, IFaqState> {
     );
   };
 
+  private collapseSection = (elem: HTMLDivElement) => {
+    const sectionHeight = elem.scrollHeight;
+    const transition = elem.style.transition;
+    elem.style.transition = "";
+
+    requestAnimationFrame(function() {
+      elem.style.height = sectionHeight + "px";
+      elem.style.transition = transition;
+
+      requestAnimationFrame(function() {
+        elem.style.height = 0 + "px";
+      });
+    });
+  };
+
+  private expandSection = (elem: HTMLDivElement) => {
+    var sectionHeight = elem.scrollHeight;
+
+    elem.style.height = sectionHeight + "px";
+
+    const onTransitionEnd: (e: TransitionEvent) => void = (
+      e: TransitionEvent
+    ) => {
+      elem.removeEventListener("transitionend", onTransitionEnd);
+
+      elem.style.height = "null";
+    };
+
+    elem.addEventListener("transitionend", onTransitionEnd);
+  };
+
   private toggleExpanded = (e: React.MouseEvent) => {
     const index = parseInt((e.currentTarget as HTMLDivElement).id, 10);
 
@@ -128,13 +165,23 @@ export class Faqs extends React.Component<{}, IFaqState> {
       return;
     }
 
+    const elem: HTMLElement | null = document.getElementById("answer-" + index);
+
+    if (!elem) {
+      return;
+    }
+
     this.setState(prevState => {
       if (prevState.expanded.indexOf(index) === -1) {
+        // currently hidden, expand
         prevState.expanded.push(index);
+        this.expandSection(elem as HTMLDivElement);
         return {
           expanded: prevState.expanded
         };
       } else {
+        // currently expanded, hide
+        this.collapseSection(elem as HTMLDivElement);
         return {
           expanded: prevState.expanded.filter(value => {
             return value != index;
