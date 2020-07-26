@@ -1,0 +1,45 @@
+.char-limited-text-field {
+  position: relative;
+  width: 100%;
+
+  .text-field-container {
+    width: 100%;
+    position: relative;
+    textarea {
+      width: 100%;
+    }
+  }
+
+  .char-limit-counter {
+    width: 60px;
+    height: 20px;
+    position: absolute;
+    bottom: -25px;
+    right: 0px;
+
+    .vinculum {
+      position: absolute;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .numerator {
+      display: inline-block;
+      position: absolute;
+      left: 0px;
+      display: flex;
+      justify-content: flex-end;
+      width: 40%;
+    }
+
+    .denominator {
+      display: inline-block;
+      position: absolute;
+      right: 0px;
+      display: flex;
+      justify-content: flex-start;
+      width: 40%;
+    }
+  }
+}

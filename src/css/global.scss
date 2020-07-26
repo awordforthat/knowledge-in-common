@@ -28,6 +28,17 @@ $mq-xlarge: "(min-width: #{$bp-xlarge})";
 $mq-xxlarge: "(min-width: #{$bp-xxlarge})";
 $mq-retina: "(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)";
 
+* {
+  font-family: "Quicksand", sans-serif;
+  color: $dark-purple;
+}
+.header {
+  font-size: 2em;
+  margin-top: 5vh;
+  margin-left: 10%;
+  margin-bottom: 1em;
+  font-weight: bold;
+}
 body {
   font-size: $base-font-size;
   line-height: $base-line-height;
@@ -164,12 +175,6 @@ body {
   background: none;
   border: none;
   text-decoration: underline;
-}
-
-* {
-  font-family: "Quicksand", sans-serif;
-
-  color: $dark-purple;
 }
 
 div {

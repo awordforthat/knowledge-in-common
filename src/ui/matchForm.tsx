@@ -3,6 +3,7 @@ import { IMatch } from "../api/iMatch";
 
 import "../css/matchForm.css";
 import "../css/global.css";
+import { TextArea } from "./textArea";
 
 export interface IMatchFormResponse {
   background: string;
@@ -55,23 +56,11 @@ export class MatchForm extends React.Component<
             </label>
           </div>
 
-          <div className="response-container">
-            <div className="text-field-container">
-              <textarea
-                autoFocus={true}
-                id="text-q1"
-                maxLength={this.q1CharLimit}
-                value={this.state.q1text}
-                onChange={this.setTextQ1}
-              />
-            </div>
-
-            <div className="char-limit-counter">
-              <div className="numerator">{this.state.q1text.length}</div>
-              <div className="vinculum">/</div>
-              <div className="denominator">{this.q1CharLimit}</div>
-            </div>
-          </div>
+          <TextArea
+            id="text-q1"
+            charLimit={this.q1CharLimit}
+            onChange={this.setTextQ1}
+          />
         </div>
         <div id="q2" className="question">
           <div>
@@ -129,22 +118,11 @@ export class MatchForm extends React.Component<
               to know?
             </label>
           </div>
-          <div className="response-container">
-            <div className="text-field-container">
-              <textarea
-                id="text-q3"
-                maxLength={this.q3CharLimit}
-                value={this.state.q3text}
-                onChange={this.setTextQ3}
-              />
-            </div>
-
-            <div className="char-limit-counter">
-              <div className="numerator">{this.state.q3text.length}</div>
-              <div className="vinculum">/</div>
-              <div className="denominator">{this.q3CharLimit}</div>
-            </div>
-          </div>
+          <TextArea
+            id="text-q3"
+            charLimit={this.q3CharLimit}
+            onChange={this.setTextQ3}
+          />
         </div>
         <div id="button-bank">
           <button
@@ -195,15 +173,15 @@ export class MatchForm extends React.Component<
     });
   };
 
-  private setTextQ1 = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  private setTextQ1 = (text: string) => {
     this.setState({
-      q1text: e.currentTarget.value
+      q1text: text
     });
   };
 
-  private setTextQ3 = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  private setTextQ3 = (text: string) => {
     this.setState({
-      q3text: e.currentTarget.value
+      q3text: text
     });
   };
 }

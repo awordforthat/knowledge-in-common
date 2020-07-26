@@ -4,37 +4,6 @@
   width: 100%;
   max-width: 650px;
 
-  .char-limit-counter {
-    width: 60px;
-    position: relative;
-    height: 20px;
-
-    .vinculum {
-      position: absolute;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-    }
-
-    .numerator {
-      display: inline-block;
-      position: absolute;
-      left: 0px;
-      display: flex;
-      justify-content: flex-end;
-      width: 40%;
-    }
-
-    .denominator {
-      display: inline-block;
-      position: absolute;
-      right: 0px;
-      display: flex;
-      justify-content: flex-start;
-      width: 40%;
-    }
-  }
-
   .question {
     margin-top: 40px;
     .label {
@@ -67,24 +36,13 @@
     }
   }
 
-  .response-container {
-    position: relative;
+  .char-limited-text-field {
     margin: 20px;
 
     .text-field-container {
-      width: 100%;
-      position: relative;
-
       textarea {
-        width: 100%;
         height: 10vh;
-        
       }
-    }
-    .char-limit-counter {
-      position: absolute;
-      bottom: -25px;
-      right: 0px;
     }
   }
 

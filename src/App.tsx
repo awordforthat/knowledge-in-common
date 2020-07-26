@@ -2,7 +2,6 @@ import React from "react";
 import { Route } from "react-router-dom";
 
 import { Home } from "./pages/home";
-import { About } from "./pages/about";
 import { Connect } from "./pages/connect";
 import { Account } from "./pages/account";
 import { RequestComplete } from "./pages/requestComplete";
@@ -23,7 +22,6 @@ function App() {
       <Route exact path="/complete" component={RequestComplete} />
       <Route exact path="/account" component={Account} />
       <Route exact path="/faqs" component={Faqs} />
-      <Route exact path="/about" component={About} />
       <Route exact path="/contact" component={Contact} />
       <Footer />
     </div>

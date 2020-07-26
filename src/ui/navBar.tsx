@@ -2,7 +2,6 @@ import * as React from "react";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import "../css/navBar.css";
 import "../css/global.css";
-import { CurrentUser } from "../user";
 
 class NavBar extends React.Component<RouteComponentProps, {}> {
   public render() {
@@ -14,9 +13,6 @@ class NavBar extends React.Component<RouteComponentProps, {}> {
           </div>
         </Link>
         <div className="button-bar">
-          <div className={this.getTabClasses("/about")}>
-            <Link to="/about">About</Link>
-          </div>
           <div className={this.getTabClasses("/faqs")}>
             <Link to="/faqs">FAQs</Link>
           </div>
@@ -44,11 +40,6 @@ class NavBar extends React.Component<RouteComponentProps, {}> {
   private getTabClasses(route: string): string {
     return this.props.location.pathname === route ? "tab selected" : "tab";
   }
-
-  private signOut = () => {
-    CurrentUser.signOut();
-    this.props.history.replace("/");
-  };
 }
 
 export const NavigationBar = withRouter(NavBar);
